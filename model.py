@@ -10,25 +10,25 @@ class Technique(db.Model):
     __tablename__ = "techniques"
 
     technique_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    technique = db.Column(db.String(100))
+    technique = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Cooking technique={self.technique} ingred_id={
-                                                        self.technique_id}>"
+        return f"<Technique technique_id={self.technique_id} technique={
+                                                            self.technique}>"
 
 
 class Course(db.Model):
-    """Course of the meal"""
+    """Course classification for a recipe"""
 
     __tablename__ = "courses"
 
     course_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    course = db.Column(db.String(100))
+    course = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Course course_id={self.course_id} name={self.course}>"
+        return f"<Course course_id={self.course_id} course={self.course}>"
 
 
 class Timeframe(db.Model):
@@ -37,21 +37,20 @@ class Timeframe(db.Model):
     __tablename__ = "timeframes"
 
     timeframe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    timeframe = db.Column(db.String(100))
+    timeframe = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Cook timeframe timeframe_id={
-                                self.timeframe_id} timeframe={self.timeframe}>"
+        return f"<Timeframe timeframe_id={self.timeframe_id} timeframe={self.timeframe}>"
 
 
 class Complexity(db.Model):
-    """Ingredient of recipe website."""
+    """Complexity of recipe"""
 
-    __tablename__ = "complexies"
+    __tablename__ = "complexities"
 
     complexity_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    complexity = db.Column(db.String(100))
+    complexity = db.Column(db.String(20))
     
     def __repr__(self):
 
@@ -59,20 +58,20 @@ class Complexity(db.Model):
 
 
 class Ingredient(db.Model):
-    """Ingredient of recipe website."""
+    """Ingredient for a recipe"""
 
     __tablename__ = "ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    ingredient = db.Column(db.String(100))
+    ingredient = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Ingredient ingred_id={self.ingredient_id} name={self.ingredient}>"
+        return f"<Ingredient_id={self.ingredient_id} name={self.ingredient}>"
 
 
 class Pantry(db.Model):
-    """Pantry linking users with ingredients"""
+    """Pantry linking users with stable ingredients"""
 
     __tablename__ = "pantries"
 
@@ -82,11 +81,11 @@ class Pantry(db.Model):
     
     def __repr__(self):
 
-        return f"<Pantry item for user ID: {self.user_id}>"
+        return f"<Pantry item for user id: {self.user_id}>"
 
 
 class IngredientPreference(db.Model):
-    """Preferences of Users for different ingredients"""
+    """Preferences of users for an ingredient"""
 
     __tablename__ = "ingredient_preferences"
 
@@ -97,8 +96,8 @@ class IngredientPreference(db.Model):
     
     def __repr__(self):
 
-        return f"<ingredient Preference id={self.ingredient_pref_id
-                                            } name={self.ingredient_pref}>"
+        return f"<Ingredient preference id={self.ingredient_pref_id
+                                                } for user id {self.user_id}>"
 
 class Diet(db.Model):
     """Diet Categories"""
@@ -106,15 +105,15 @@ class Diet(db.Model):
     __tablename__ = "diets"
 
     diet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    diet = db.Column(db.String(50))
+    diet = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Diet diet_id={self.diet_id} name={self.diet}>"
+        return f"<Diet_id={self.diet_id} diet={self.diet}>"
 
 
 class DietPreference(db.Model):
-    """Dietary Restrictions/Preferences for Users"""
+    """Dietary restrictions/preferences of a user"""
 
     __tablename__ = "diet_preferences"
 
@@ -126,7 +125,7 @@ class DietPreference(db.Model):
     def __repr__(self):
 
         return f"<Dietary Preference id={self.diet_pref_id
-                                            } name={self.diet_pref}>"
+                                        } for user id: {self.user_id}>"
 
 
 class Cuisine(db.Model):
@@ -143,7 +142,7 @@ class Cuisine(db.Model):
 
 
 class CuisinePreference(db.Model):
-    """Cuisine preferences of users"""
+    """Cuisine preference for user"""
 
     __tablename__ = "cuisine_preferences"
 
@@ -154,8 +153,8 @@ class CuisinePreference(db.Model):
     
     def __repr__(self):
 
-        return f"<Cuisine Preference id={self.cuisine_pref_id
-                                            } name={self.cuisine_pref}>"
+        return f"<Cuisine preference id={self.cuisine_pref_id
+                                            } for user id: {self.user_id}>"
 
 
 class User(db.Model):
@@ -172,7 +171,7 @@ class User(db.Model):
 
     def __repr__(self):
 
-        return "<User user_id={} email={}>".format(self.user_id, self.email)
+        return f"<User user_id={self.user_id} email={self.email}>"
 
 
 class Rating(db.Model):
@@ -190,11 +189,11 @@ class Rating(db.Model):
 
     def __repr__(self):
 
-        return f"<Rating rating_id={self.rating_id} recipe_id={self.movie_id} score={self.score}>"
+        return f"<Rating rating_id={self.rating_id} recipe_id={self.recipe_id}>"
 
 
 class SavedRecipe(db.Model):
-    """Rating of recipe website."""
+    """Saved recipe"""
 
     __tablename__ = "saved_recipes"
 
@@ -204,7 +203,7 @@ class SavedRecipe(db.Model):
 
     def __repr__(self):
 
-        return f"<Rating rating_id={self.rating_id} recipe_id={self.movie_id} score={self.score}>"
+        return f"<Rating rating_id={self.rating_id}>"
 
 
 ##############################################################################
