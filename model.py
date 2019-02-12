@@ -14,8 +14,7 @@ class Technique(db.Model):
     
     def __repr__(self):
 
-        return f"<Technique technique_id={self.technique_id} technique={
-                                                            self.technique}>"
+        return f"<Technique technique_id={self.technique_id} technique={self.technique}>"
 
 
 class Course(db.Model):
@@ -54,7 +53,7 @@ class Complexity(db.Model):
     
     def __repr__(self):
 
-        return f"<complexity level ={self.complexity}>"
+        return f"<Complexity level ={self.complexity}>"
 
 
 class Ingredient(db.Model):
@@ -96,8 +95,7 @@ class IngredientPreference(db.Model):
     
     def __repr__(self):
 
-        return f"<Ingredient preference id={self.ingredient_pref_id
-                                                } for user id {self.user_id}>"
+        return f"<Ingredient preference id={self.ingredient_pref_id} for user id {self.user_id}>"
 
 class Diet(db.Model):
     """Diet Categories"""
@@ -124,8 +122,7 @@ class DietPreference(db.Model):
     
     def __repr__(self):
 
-        return f"<Dietary Preference id={self.diet_pref_id
-                                        } for user id: {self.user_id}>"
+        return f"<Dietary Preference id={self.diet_pref_id} for user id: {self.user_id}>"
 
 
 class Cuisine(db.Model):
@@ -153,8 +150,7 @@ class CuisinePreference(db.Model):
     
     def __repr__(self):
 
-        return f"<Cuisine preference id={self.cuisine_pref_id
-                                            } for user id: {self.user_id}>"
+        return f"<Cuisine preference id={self.cuisine_pref_id} for user id: {self.user_id}>"
 
 
 class User(db.Model):
@@ -196,14 +192,13 @@ class SavedRecipe(db.Model):
     """Saved recipe"""
 
     __tablename__ = "saved_recipes"
-
     record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
     def __repr__(self):
 
-        return f"<Rating rating_id={self.rating_id}>"
+        return f"<Saved Recipe record_id={self.record_id}>"
 
 
 ##############################################################################
@@ -213,35 +208,35 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our PstgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///recipe'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///recipes'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
 
 
-def predict_user_rating(title, user_id):
+# def predict_user_rating(title, user_id):
 
-    m = Movie.query.filter_by(title=title).one()
-    u = User.query.get(user_id)
+#     m = Movie.query.filter_by(title=title).one()
+#     u = User.query.get(user_id)
 
-    recipe = u.recipe
+#     recipe = u.recipe
 
-    other_recipe = Rating.query.filter_by(movie_id=m.movie_id).all()
-    other_users = [r.user for r in other_recipe]
+#     other_recipe = Rating.query.filter_by(movie_id=m.movie_id).all()
+#     other_users = [r.user for r in other_recipe]
 
-    users_w_commonality = []
+#     users_w_commonality = []
 
-    for rating in recipe:
-        # print("********Movie********", rating.movie.title)
-        movie_id = rating.movie_id
-        # print("********movie_id******", movie_id)
-        common_recipe = Rating.query.filter(Rating.movie_id==movie_id).all()
-        users = [r.user for r in common_recipe]
-        # print("********common_recipe*******", common_recipe)
-        users_w_commonality.extend(users)
+#     for rating in recipe:
+#         # print("********Movie********", rating.movie.title)
+#         movie_id = rating.movie_id
+#         # print("********movie_id******", movie_id)
+#         common_recipe = Rating.query.filter(Rating.movie_id==movie_id).all()
+#         users = [r.user for r in common_recipe]
+#         # print("********common_recipe*******", common_recipe)
+#         users_w_commonality.extend(users)
 
-    unique_users = set(users_w_commonality)
-    return unique_users
+#     unique_users = set(users_w_commonality)
+#     return unique_users
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave

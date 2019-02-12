@@ -23,29 +23,27 @@ def show_recipe_search_form():
     return render_template("recipe-search.html")
 
 
-@app.route("/recipes")
+@app.route("/recipes", methods=['GET'])
 def find_recipes():
     """Search for recipes on Spoonacular"""
 
-    query = request.args.get('query')
+    query = request.args.get('search_field')
+    print ('This is my query!!!!!!!!!!!!!  :'+query)
 
-
-    payload = {'number':5,'ranking':1,'ingredient':ingredient
-                'X-RapidAPI-Key':app.secret_key}
-    url = '"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients'
+    # payload = {'number':5,'ranking':1,'ingredient':'sour cream',
+    #             'headers':{'X-RapidAPI-Key':app.secret_key}}
+    # url = 'https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients'
     
-    response = requests.get(url, params=payload)
+    # response = requests.get(url, params=payload)
 
-    data = response.json()
+    # data = response.json()
     # - (Make sure to save the JSON data from the response to the data
     #   variable so that it can display on the page as well.)
 
     #data = {'This': ['Some', 'mock', 'JSON']}
-    events = []
+    # events = []
 
-    return render_template("afterparties.html",
-                           data=pformat(data),
-                           results=events)
+    # return render_template("afterparties.html",data=pformat(data), results=events)
 
     # # If the required info isn't in the request, redirect to the search form
     # else:
