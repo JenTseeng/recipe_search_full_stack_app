@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <title>Recipe Search!</title>
+  <br>
+  <!-- <table>
+      <tr>
+        <td> <a href="/users">View all users</a> &nbsp&nbsp&nbsp&nbsp</td>
+        <td> <a href="/registration">Register here!</a> &nbsp&nbsp&nbsp&nbsp</td>
+        <td>
+        {% if 'user_id' in session %}
+        <td> <a href="/users/{{session['user_id']}}">Go to user page</a>&nbsp&nbsp&nbsp&nbsp </td>
+        <td>
+        <form action="/logout">
+          <input type='submit' value='Log Out'>
+        </form>
+        </td>
+        {% else %}
+        <td>
+        <form action="/login">
+          <input type='submit' value='Log In'>
+        </form>
+        {% endif %}
+        </td>
+      </tr>
+  </table> -->
+</head>
+
+<body>
+  <hr>
+  <ul>
+    {% for message in get_flashed_messages() %}
+        <li>
+            {{ message }}
+        </li>
+    {% endfor %}
+    </ul>
+
+  {% block content %} put your content here {% endblock %}
+
+</body>
+</html>

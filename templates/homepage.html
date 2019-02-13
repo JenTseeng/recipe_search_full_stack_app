@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Welcome to Recipe Search!</h1>
+
+<form action='/recipes' method='GET'>
+    Search for recipes with: <input type="text" name="search_field">
+    <input type="submit" value="Search!">
+</form>
+
+{% endblock %}
