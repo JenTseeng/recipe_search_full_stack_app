@@ -5,11 +5,16 @@ import requests
 from flask import Flask, render_template, request, flash, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 
+import spoonacular as sp
+
+
 app = Flask(__name__)
 app.search_id = os.environ['search_id']
 app.search_key = os.environ['search_key']
-app.ingred_id = os.environ['ingred_id']
-app.ingred_key = os.environ['ingred_key']
+# app.ingred_id = os.environ['ingred_id']
+# app.ingred_key = os.environ['ingred_key']
+spoon = sp.API(os.environ['APIKey'])
+
 app.secret_key = "ABC"
 
 @app.route("/")
@@ -29,16 +34,16 @@ def show_recipe_search_form():
 @app.route("/recipes", methods=['GET'])
 def find_recipes():
     """Search for recipes on Spoonacular"""
+   
+    # debugging
+    query = 'banana'
+    min_qty = 1
 
-    # spoonacular setup
+    # getting data from form
+    # query = request.args.get('search_field')
     
-    # header = {'X-RapidAPI-Key':app.secret_key}
-    # url = 'https://webknox-recipes.p.rapidapi.com/recipes/findByIngredients'
-    # response = requests.get(url, headers=header, params=payload) #spoonacular
-    
-    query = request.args.get('search_field')
     excluded = ''
-    num_recipes = 10
+    num_recipes = 20
     payload = {'app_id':app.search_id, 'app_key':app.search_key, 
     'q':query, 'from':0, 'to':num_recipes, 'excluded':excluded}    
     url = 'https://api.edamam.com/search'
@@ -47,13 +52,13 @@ def find_recipes():
     data = response.json()
 
     recipes = parse_search_results(data['hits'])
-    # results = data['hits']
-
+    filtered_recipes = filter_recipe(recipes, query, min_qty, 5)
     
     return render_template("search_results.html", data=data, recipes=recipes)
 
-# url= 'https://api.edamam.com/api/nutrition-details'
-# payload = {'app_id':app.ingred_id, 'app_key':app.ingred_key,'ingr':'1 teaspoon apple cider vinegar'}
+
+# url= 'https://api.edamam.com/api/nutrition-data'
+# payload = {'app_id':app.ingred_id, 'app_key':app.ingred_key,'ingr':'1%20large%20apple'}
 # response = requests.get(url, params=payload)
 
 ######### Helper Functions #########
@@ -83,6 +88,22 @@ def parse_search_results(data):
         recipe_results.append(new_entry)
 
     return recipe_results
+
+
+def filter_recipes(recipes, query, min_qty, numResults):
+    count = 0
+    returned_recipes = []
+    for recipe in recipes:
+        for ingredient in recipe['ingredients']:
+            if query in ingredient:
+                response = spoon.parse_ingredients(ingredient, servings=1)
+                if # quantity is within bound
+                    returned_recipes.append(recipe)
+                    count += 1
+                    if count == numResults:
+                        break
+
+
 
 
 if __name__ == "__main__":
