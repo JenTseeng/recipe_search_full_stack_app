@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Let's use those ingredients!</h1>
+
+<form action='/standard_results' method='GET'>
+    Search for recipes with: <input type="text" name="search_field">
+    Qty: <input type="text" name="quantity">
+    Unit: <select name="unit">
+        <option value='cup'> Cups </option>
+        <option value='ounce'> Ounces </option>
+        <option value='tablespoon'> Tablespoons </option>
+        <option value='tablespoon'> Teaspoons </option>
+        </select>
+    <input type="submit" value="Search!">
+</form>
+
+{% endblock %}

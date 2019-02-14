@@ -1,0 +1,5 @@
+env/
+*ratingsLab/
+*secret*
+__pycache__
+*.pyc

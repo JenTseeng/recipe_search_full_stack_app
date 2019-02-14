@@ -4,7 +4,7 @@
 <h1>Search Results</h1>
 
 {% for recipe in recipes %}
-    <h4>{{recipe['title']}}</h4>
+    <h3><a href="{{recipe['url']}}">{{recipe['title']}}</a></h3>
     <img src="{{recipe['image']}}">
     <ul> Ingredients:</ul>
     {% for ingredient in recipe['ingredients'] %}
