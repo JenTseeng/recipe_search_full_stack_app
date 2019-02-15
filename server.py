@@ -4,6 +4,7 @@ import os, requests
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
+from datetime import datetime
 from model import *
 
 
@@ -256,8 +257,36 @@ def check_quantity(ingredients, query_ingred, unit, condition):
                     pass
 
 
-def check_API_calls_remaining(response):
+def check_API_calls_remaining(header):
     """Check for remainins calls for spoonacular API"""
+
+    CALL_LIMIT = 50
+    RESULTS_LIMIT = 500
+
+    now = datetime.utcnow().date()
+    if session['no_calls_left']:
+        if now > session['date_disabled']:
+            # allow call
+            pass
+            
+        else:
+            # alert user that no more calls, check back in XXX time
+            pass
+
+    else:
+        # extract time and remaining budget from header
+        date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
+        remaining_calls = header['X-RateLimit-requests-Remaining']
+        remaining_results = header['X-RateLimit-results-Remaining']
+        
+        if remaining_calls < CALL_LIMIT and remaining_results < RESULTS_LIMIT:
+            calls_left = True
+            return calls_left
+        else:
+            session['no_calls_left'] = True
+            session['date_disabled'] = date
+
+
 
     pass
 
