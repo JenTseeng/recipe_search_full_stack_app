@@ -1,6 +1,18 @@
 import os, requests, pickle
 from datetime import datetime
 
+def query_recipe_api(app_id, app_key, query, num_recipes = 5, excluded = None):
+    """ Query Recipe API for search terms """
+
+    payload = {'app_id':app_id, 'app_key':app_key, 'q':query, 
+                'from':0, 'to':num_recipes, 'excluded':excluded}    
+    url = 'https://api.edamam.com/search'
+    
+    response = requests.get(url, params=payload)
+    data = response.json()
+
+    return data
+
 def parse_recipe(recipe):
     """ Parse API returned recipe results and returns list of a dictionaries
     
@@ -99,31 +111,31 @@ def update_API_calls_remaining(header):
 
     # extract time and remaining budget from header
     date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
-    remaining_calls = header['X-RateLimit-requests-Remaining']
-    remaining_results = header['X-RateLimit-results-Remaining']
+    qty_calls_remaining = header['X-RateLimit-requests-Remaining']
+    qty_results_remaining = header['X-RateLimit-results-Remaining']
 
-    # set 'calls_left' variable
-    if remaining_calls > 0 and remaining_results > 0:
-        calls_left = True
+    # set boolean for whether calls are available
+    if qty_calls_remaining > 0 and qty_results_remaining > 0:
+        calls_avail_bool = True
 
     else:
-        calls_left = False
+        calls_avail_bool = False
 
     # write call information to file
-    call_info = {"call_update_date":date,"calls_left":calls_left, 
-                    "remaining_calls":remaining_calls,
-                    "remaining_results":remaining_results}
-    with open('call_tracker.data','w') as file:
+    call_info = {"call_update_date":date,"calls_avail_bool":calls_avail_bool, 
+                    "qty_calls_remaining":qty_calls_remaining,
+                    "qty_results_remaining":qty_results_remaining}
+    with open('api_tracker.pickle','wb') as file:
         pickle.dump(call_info, file)
 
 
-def check_for_API_calls_remaining():
+def check_for_api_calls_remaining(filename='api_tracker.pickle'):
     """Check for remaining API calls before making a call"""
 
-    with open('call_tracker.data','wb') as file:
+    with open(filename,'rb') as file:
         call_info = pickle.load(file)
 
-    if call_info['remaining_calls']==True:
+    if call_info['calls_avail_bool']==True and call_info['qty_calls_remaining']>0:
         return True
 
     else:
@@ -133,25 +145,25 @@ def check_for_API_calls_remaining():
             return True
             
         else:
-            flash("You've run out of API calls.  Perhaps try a regular recipe search.")
+            print("You've run out of API calls.  Perhaps try a regular recipe search.")
             return False
 
 
 def reset_API_call_count():
     """Reset counters for API"""
-    # file = open(call_tracker.data, 'r')
-    # call_info = pickle.load(file)
-
+    
     CALL_LIMIT = 50
     RESULT_LIMIT = 500
 
-    calls_left = True
+    calls_avail_bool = True
     call_update_date = datetime.utcnow().date()
-    remaining_results = RESULT_LIMIT
-    remaining_calls = CALL_LIMIT
+    qty_results_remaining = RESULT_LIMIT
+    qty_calls_remaining = CALL_LIMIT
 
-    call_info = {"call_update_date":call_update_date,"calls_left":calls_left, 
-                "remaining_calls":remaining_calls,
-                "remaining_results":remaining_results}
-    with open('call_tracker.data','wb') as file:
-        pickle.dump(call_info, file)
+    call_info = {"call_update_date":call_update_date,"calls_avail_bool":calls_avail_bool, 
+                "qty_calls_remaining":qty_calls_remaining,
+                "qty_results_remaining":qty_results_remaining}
+
+    file = open('api_tracker.pickle', 'wb')
+    pickle.dump(call_info, file)
+    file.close()

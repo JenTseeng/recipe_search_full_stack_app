@@ -8,17 +8,17 @@ from utility import *
 from flask import Flask, render_template, request, flash, redirect, session
 
 app = Flask(__name__)
+app.secret_key = "ABC"
+
+# Jinja to raise errors for undefined vars
+app.jinja_env.undefined = StrictUndefined
+
 app.search_id = os.environ['search_id']
 app.search_key = os.environ['search_key']
 # keys for Edamam nutrition API
 # app.ingred_id = os.environ['ingred_id']
 # app.ingred_key = os.environ['ingred_key']
 
-app.secret_key = "ABC"
-
-
-# Jinja to raise errors for undefined vars
-app.jinja_env.undefined = StrictUndefined
 
 @app.route("/")
 def homepage():
@@ -69,10 +69,10 @@ def check_login():
 
     email_to_check = request.form.get('email')
     pw = request.form.get('pw')
-    user_db_entry = User.query.filter(User.email==email_to_check, User.password==pw).first()
+    user = User.query.filter(User.email==email_to_check, User.password==pw).first()
 
     # log in user with valid credentials
-    if user_db_entry:
+    if user:
         session['user_id'] = user.user_id
         flash("You are now logged in!")
         return redirect("/users/{}".format(user.user_id))
@@ -122,7 +122,7 @@ def find_recipes():
     excluded = '' # will eventually draw from user db (or session)
     num_recipes = 5
 
-    data = query_recipe_api(query, num_recipes, excluded)
+    data = query_recipe_api(app.search_id, app.search_key, query, num_recipes, excluded)
 
     # extract relevant info from API response
     recipes = []
@@ -143,7 +143,7 @@ def find_recipes_with_ingred_limits():
     excluded = '' # will eventually draw from user db (or session)
     num_recipes = 5
 
-    data = query_recipe_api(query, num_recipes, excluded)
+    data = query_recipe_api(app, query, num_recipes, excluded)
 
     # parse recipes in API results
     recipes = []
@@ -155,36 +155,22 @@ def find_recipes_with_ingred_limits():
     return render_template("search_results.html", recipes=recipes)
 
 
-@app.route("/check_api_calls")
-def test_api_call_counter():
-    """Debug route"""
+# @app.route("/check_api_calls")
+# def test_api_call_counter():
+#     """Debug route"""
 
-    reset_API_call_count()
-    init_test = check_for_API_calls_remaining()
+#     reset_API_call_count()
+#     init_test = check_for_API_calls_remaining()
 
-    remaining_calls=False
-    call_update_date = datetime.utcnow().date()
-    setting_false = check_for_API_calls_remaining()
+#     remaining_calls=False
+#     call_update_date = datetime.utcnow().date()
+#     setting_false = check_for_API_calls_remaining()
 
-    yesterday = datetime.strptime("14-Feb-2019", "%d-%b-%Y").date()
-    call_update_date = yesterday
-    next_day = check_for_API_calls_remaining()
+#     previous_date = datetime.strptime("14-Feb-2019", "%d-%b-%Y").date()
+#     call_update_date = yesterday
+#     next_day = check_for_API_calls_remaining()
 
-    return render_template("calls_debug.html", init = init_test, setting_false = setting_false, next_day=next_day)
-
-
-##################### Helper Functions ################################
-def query_recipe_api(query, num_recipes = 5, excluded = None):
-    """ Query Recipe API for search terms """
-
-    payload = {'app_id':app.search_id, 'app_key':app.search_key, 'q':query, 
-                'from':0, 'to':num_recipes, 'excluded':excluded}    
-    url = 'https://api.edamam.com/search'
-    
-    response = requests.get(url, params=payload)
-    data = response.json()
-
-    return data
+#     return render_template("calls_debug.html", init = init_test, setting_false = setting_false, next_day=next_day)
 
 
 ######################## Trials with APIs ###########################
