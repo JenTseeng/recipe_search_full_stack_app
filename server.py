@@ -11,6 +11,8 @@ from model import *
 app = Flask(__name__)
 app.search_id = os.environ['search_id']
 app.search_key = os.environ['search_key']
+
+# keys for Edamam nutrition API
 # app.ingred_id = os.environ['ingred_id']
 # app.ingred_key = os.environ['ingred_key']
 
@@ -42,12 +44,12 @@ def add_user():
     email_to_check = request.form.get('email')
     pw = request.form.get('pw')
 
-    # Indicate taken user info if email exists in db
+    # Redirect and request different login in email unavailable
     if User.query.filter(User.email==email_to_check).first():
         flash("User already exists. Please enter a different email or login.")
         return redirect("/registration")
 
-    # add user
+    # add user to db
     else:
         user = User(email=email_to_check, password=pw)
         db.session.add(user)
@@ -60,6 +62,7 @@ def add_user():
 @app.route('/login')
 def login():
     """Login page"""
+    
     return render_template("login.html")
 
 
@@ -69,15 +72,15 @@ def check_login():
 
     email_to_check = request.form.get('email')
     pw = request.form.get('pw')
-    user = User.query.filter(User.email==email_to_check, User.password==pw).first()
+    user_db_entry = User.query.filter(User.email==email_to_check, User.password==pw).first()
 
     # log in user with valid credentials
-    if user:
+    if user_db_entry:
         session['user_id'] = user.user_id
         flash("You are now logged in!")
         return redirect("/users/{}".format(user.user_id))
 
-    # notice for incorrect credentials
+    # alert for incorrect credentials
     else:
         flash("Credentials incorrect. Please try again.")
         return redirect("/login") 
@@ -119,36 +122,62 @@ def find_recipes():
     """Search for recipes with keywords"""
 
     query = request.args.get('search_field')
-    excluded = '' # will draw from user db or session
+    excluded = '' # will eventually draw from user db (or session)
     num_recipes = 5
 
     data = query_recipe_api(query, num_recipes, excluded)
 
-    # parse results into digestible format
-    recipes = parse_search_results(data['hits'])
+    # extract relevant info from API response
+    recipes = []
+    for hit in data['hits']:
+        recipe = hit['recipe']
+        parsed_recipe = parse_recipe(recipe)
+        recipes.append(parsed_recipe)
 
-    return render_template("search_results.html", data=data, recipes=recipes)
+    return render_template("search_results.html", recipes=recipes)
 
 
 @app.route("/ingredient_results", methods=['GET'])
 def find_recipes_with_ingred_limits():
     """Recipe Search with ingredient qty checks"""
 
-    # debugging
-    # query will be dictionary with ingredient with min and max?
-    # query = 'banana'
-    # min_qty = 1
+    # query = request.args.get('search_field')
+    query = 'banana'
+    excluded = '' # will eventually draw from user db (or session)
+    num_recipes = 5
 
-    # TODO: parse query
-    # figure out whether there is a min and/or max for each ingred
-    # maybe phase 1 will require min and max
-    # bounds = determine_bounds(min_qty, max_qty)
+    data = query_recipe_api(query, num_recipes, excluded)
 
-    pass
-    
+    # parse recipes in API results
+    recipes = []
+    for hit in data['hits']:
+        recipe = hit['recipe']
+        parsed_recipe = parse_recipe(recipe)
+        recipes.append(parsed_recipe)
+
+    return render_template("search_results.html", recipes=recipes)
 
 
-######### Helper Functions #########
+@app.route("/check_api_calls")
+def test_api_call_counter():
+    """Debug route"""
+
+    initialize_API_call_count()
+    initialization = check_for_API_calls_remaining()
+
+    session['calls_left']=False
+    session['date_disabled'] = datetime.utcnow().date()
+    setting_false = check_for_API_calls_remaining()
+
+    yesterday = datetime.strptime("14-Feb-2019", "%d-%b-%Y").date()
+    session['date_disabled'] = yesterday
+    next_day = check_for_API_calls_remaining()
+
+    return render_template("calls_debug.html", init = initialization, setting_false = setting_false, next_day=next_day)
+
+
+
+######################## Helper Functions ###########################
 
 def query_recipe_api(query, num_recipes = 5, excluded = None):
     """ Query Recipe API for search terms """
@@ -163,9 +192,9 @@ def query_recipe_api(query, num_recipes = 5, excluded = None):
     return data
 
 
-
 def determine_bounds(min_qty=None, max_qty=None):
     """ Check whether user input min/max """
+
     if min_qty and max_qty:
         bounds = 'both'
     elif min_qty:
@@ -177,35 +206,30 @@ def determine_bounds(min_qty=None, max_qty=None):
 
     return bounds
 
-def parse_search_results(data):
+
+def parse_recipe(recipe):
     """ Parse API returned recipe results and returns list of a dictionaries
     
-    Hit has keys of: recipe, bookmarked, and bought
-    A recipe keys: label (ie: recipe title), image, url, yield, ingreds, etc.
-    An ingredient is a list of dictionaries.  1 dictionary per ingredient
-    Each ingredient dictionary has text and weight (few have quantity and measure)
+    Recipe: label (ie: recipe title), image, url, yield, ingreds, ...
+    Each ingredient: text, weight (few have quantity and measure)
 
     """
-    recipe_results = []
 
-    for hit in data:
-        new_entry = {}
-        ingredients = []
-        recipe = hit['recipe']
+    parsed_recipe = {}
+    ingredients = []
 
-        # add relevant info to new_entry
-        new_entry['title'] = recipe['label']
-        new_entry['image'] = recipe['image']
-        new_entry['url'] = recipe['url']
+    # add relevant info to new_entry
+    parsed_recipe['title'] = recipe['label']
+    parsed_recipe['image'] = recipe['image']
+    parsed_recipe['url'] = recipe['url']
 
-        # extract text from each ingredient and add to new_entry
-        for ingredient in recipe['ingredients']:
-            ingredients.append(ingredient['text'])        
-        new_entry['ingredients'] = ingredients
+    # extract text from each ingredient and add to new_entry
+    for ingredient in recipe['ingredients']:
+        ingredients.append(ingredient['text'])        
+    parsed_recipe['ingredients'] = ingredients
 
-        recipe_results.append(new_entry)
-
-    return recipe_results
+    # return recipe with relevant information
+    return parsed_recipe
 
 
 def parse_search_results_with_ingred_limit(data, query, num_results = 5, min_qty=None, max_qty=None):
@@ -249,46 +273,59 @@ def check_quantity(ingredients, query_ingred, unit, condition):
                 if condition == "min_only":
                     # check for min    
                     pass
+
                 elif condition == "max_only":
                     # check for max
                     pass
+
                 else:
                     # check for both
                     pass
 
 
-def check_API_calls_remaining(header):
-    """Check for remainins calls for spoonacular API"""
+def update_API_calls_remaining(header):
+    """Update remaining calls for spoonacular API"""
 
+    # extract time and remaining budget from header
+    date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
+    session['remaining_calls'] = header['X-RateLimit-requests-Remaining']
+    session['remaining_results'] = header['X-RateLimit-results-Remaining']
+
+    # set session['calls_left'] if needed
+    if session['remaining_calls'] > 0 and session['remaining_results'] > 0:
+        session['calls_left'] = True
+        
+    else:
+        session['calls_left'] = False
+        session['date_disabled'] = date
+
+
+def check_for_API_calls_remaining():
+    """Check for remaining API calls before making a call"""
+
+    if session['calls_left']==True:
+        return True
+
+    else:
+        now = datetime.utcnow().date()
+        if now > session['date_disabled']:
+            initialize_API_call_count()
+            return True
+            
+        else:
+            flash("You've run out of API calls.  Perhaps try a regular recipe search.")
+            return False
+
+
+def initialize_API_call_count():
+    """Initialize counting for API"""
     CALL_LIMIT = 50
     RESULTS_LIMIT = 500
 
-    now = datetime.utcnow().date()
-    if session['no_calls_left']:
-        if now > session['date_disabled']:
-            # allow call
-            pass
-            
-        else:
-            # alert user that no more calls, check back in XXX time
-            pass
+    session['remaining_calls'] = CALL_LIMIT
+    session['remaining_results'] = RESULTS_LIMIT
+    session['calls_left'] = True
 
-    else:
-        # extract time and remaining budget from header
-        date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
-        remaining_calls = header['X-RateLimit-requests-Remaining']
-        remaining_results = header['X-RateLimit-results-Remaining']
-        
-        if remaining_calls < CALL_LIMIT and remaining_results < RESULTS_LIMIT:
-            calls_left = True
-            return calls_left
-        else:
-            session['no_calls_left'] = True
-            session['date_disabled'] = date
-
-
-
-    pass
 
 # Trials with other APIs
 # url= 'https://api.edamam.com/api/nutrition-data'
@@ -300,7 +337,6 @@ def check_API_calls_remaining(header):
 # response = requests.get("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/cuisine",headers={"X-RapidAPI-Key": "0259f0d9e1msha4cc9f28bb5ed5ep1deaf8jsn6ff56d1c04da"})
 
 
-
 if __name__ == "__main__":
     app.debug = True
     # make sure templates, etc. are not cached in debug mode
@@ -308,6 +344,7 @@ if __name__ == "__main__":
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     connect_to_db(app)
-
     DebugToolbarExtension(app)
+    
     app.run(host="0.0.0.0")
+    
