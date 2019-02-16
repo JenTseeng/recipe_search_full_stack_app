@@ -1,27 +1,24 @@
 from pprint import pformat
-import os, requests
 
-from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
-from datetime import datetime
-from model import *
+from jinja2 import StrictUndefined
 
+from model import *
+from utility import *
+from flask import Flask, render_template, request, flash, redirect, session
 
 app = Flask(__name__)
 app.search_id = os.environ['search_id']
 app.search_key = os.environ['search_key']
-
 # keys for Edamam nutrition API
 # app.ingred_id = os.environ['ingred_id']
 # app.ingred_key = os.environ['ingred_key']
 
 app.secret_key = "ABC"
 
+
 # Jinja to raise errors for undefined vars
 app.jinja_env.undefined = StrictUndefined
-
-
 
 @app.route("/")
 def homepage():
@@ -162,23 +159,21 @@ def find_recipes_with_ingred_limits():
 def test_api_call_counter():
     """Debug route"""
 
-    initialize_API_call_count()
-    initialization = check_for_API_calls_remaining()
+    reset_API_call_count()
+    init_test = check_for_API_calls_remaining()
 
-    session['calls_left']=False
-    session['date_disabled'] = datetime.utcnow().date()
+    remaining_calls=False
+    call_update_date = datetime.utcnow().date()
     setting_false = check_for_API_calls_remaining()
 
     yesterday = datetime.strptime("14-Feb-2019", "%d-%b-%Y").date()
-    session['date_disabled'] = yesterday
+    call_update_date = yesterday
     next_day = check_for_API_calls_remaining()
 
-    return render_template("calls_debug.html", init = initialization, setting_false = setting_false, next_day=next_day)
+    return render_template("calls_debug.html", init = init_test, setting_false = setting_false, next_day=next_day)
 
 
-
-######################## Helper Functions ###########################
-
+##################### Helper Functions ################################
 def query_recipe_api(query, num_recipes = 5, excluded = None):
     """ Query Recipe API for search terms """
 
@@ -192,142 +187,8 @@ def query_recipe_api(query, num_recipes = 5, excluded = None):
     return data
 
 
-def determine_bounds(min_qty=None, max_qty=None):
-    """ Check whether user input min/max """
+######################## Trials with APIs ###########################
 
-    if min_qty and max_qty:
-        bounds = 'both'
-    elif min_qty:
-        bounds = 'min_only'
-    elif min_qty:
-        bounds = 'min_only'
-    else:
-        bounds = 'skip_qty_check'
-
-    return bounds
-
-
-def parse_recipe(recipe):
-    """ Parse API returned recipe results and returns list of a dictionaries
-    
-    Recipe: label (ie: recipe title), image, url, yield, ingreds, ...
-    Each ingredient: text, weight (few have quantity and measure)
-
-    """
-
-    parsed_recipe = {}
-    ingredients = []
-
-    # add relevant info to new_entry
-    parsed_recipe['title'] = recipe['label']
-    parsed_recipe['image'] = recipe['image']
-    parsed_recipe['url'] = recipe['url']
-
-    # extract text from each ingredient and add to new_entry
-    for ingredient in recipe['ingredients']:
-        ingredients.append(ingredient['text'])        
-    parsed_recipe['ingredients'] = ingredients
-
-    # return recipe with relevant information
-    return parsed_recipe
-
-
-def parse_search_results_with_ingred_limit(data, query, num_results = 5, min_qty=None, max_qty=None):
-    recipe_results = []
-
-    for hit in data:
-        new_entry = {}
-        ingredients = []
-        recipe = hit['recipe']
-
-        # add relevant info to new_entry
-        new_entry['title'] = recipe['label']
-        new_entry['image'] = recipe['image']
-        new_entry['url'] = recipe['url']
-
-        if ingred_check == True:
-            check_quantity()
-
-
-        # extract text from each ingredient and add to new_entry
-        for ingredient in recipe['ingredients']:
-            ingredients.append(ingredient['text'])        
-        new_entry['ingredients'] = ingredients
-
-        recipe_results.append(new_entry)
-
-    return recipe_results
-
-
-def check_quantity(ingredients, query_ingred, unit, condition):
-    # starting with 1 thing in query to start
-    # query = {ingred: 'flour', min: '2 cups', max = '4 cups'}
-    
-    for ingredient in ingredients:
-        if ingredient == query_ingred:
-            ingred_data = spoon.parse_ingredients(ingredient)
-            num = ingred_data['amount']
-            unit_short = ingred_data['unitShort']
-            unit_long = ingred_data['unitLong']
-            if unit == unit_short or unit == unit_long:
-                if condition == "min_only":
-                    # check for min    
-                    pass
-
-                elif condition == "max_only":
-                    # check for max
-                    pass
-
-                else:
-                    # check for both
-                    pass
-
-
-def update_API_calls_remaining(header):
-    """Update remaining calls for spoonacular API"""
-
-    # extract time and remaining budget from header
-    date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
-    session['remaining_calls'] = header['X-RateLimit-requests-Remaining']
-    session['remaining_results'] = header['X-RateLimit-results-Remaining']
-
-    # set session['calls_left'] if needed
-    if session['remaining_calls'] > 0 and session['remaining_results'] > 0:
-        session['calls_left'] = True
-        
-    else:
-        session['calls_left'] = False
-        session['date_disabled'] = date
-
-
-def check_for_API_calls_remaining():
-    """Check for remaining API calls before making a call"""
-
-    if session['calls_left']==True:
-        return True
-
-    else:
-        now = datetime.utcnow().date()
-        if now > session['date_disabled']:
-            initialize_API_call_count()
-            return True
-            
-        else:
-            flash("You've run out of API calls.  Perhaps try a regular recipe search.")
-            return False
-
-
-def initialize_API_call_count():
-    """Initialize counting for API"""
-    CALL_LIMIT = 50
-    RESULTS_LIMIT = 500
-
-    session['remaining_calls'] = CALL_LIMIT
-    session['remaining_results'] = RESULTS_LIMIT
-    session['calls_left'] = True
-
-
-# Trials with other APIs
 # url= 'https://api.edamam.com/api/nutrition-data'
 # payload = {'app_id':app.ingred_id, 'app_key':app.ingred_key,'ingr':'1 cup flour'}
 # response = requests.get(url, params=payload)
