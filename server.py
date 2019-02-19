@@ -90,6 +90,13 @@ def show_user_details(user_id):
     return render_template("user_info.html", user=user)
 
 
+@app.route('/update_diet')
+def show_diet_selection_page():
+    """Dietary option selection page"""
+
+    return render_template("diet_selection.html")
+
+
 @app.route('/logout')
 def logout():
     """Logout page"""
@@ -137,10 +144,11 @@ def find_recipes():
 def find_recipes_with_ingred_limits():
     """Recipe Search with ingredient qty checks"""
 
-    # query = request.args.get('search_field')
-
+    # check for API calls remaining
     requests_left = utility.check_api_call_budget()
+
     if requests_left:
+        # query = request.args.get('search_field')
 
         query = 'banana'
         excluded = '' # will eventually draw from user db (or session)

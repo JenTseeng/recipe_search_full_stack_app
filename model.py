@@ -97,13 +97,14 @@ class IngredientPreference(db.Model):
 
         return f"<Ingredient preference id={self.ingredient_pref_id} for user id {self.user_id}>"
 
-class Diet(db.Model):
-    """Diet Categories"""
+class DietType(db.Model):
+    """Dietary Categories"""
 
     __tablename__ = "diets"
 
     diet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     diet = db.Column(db.String(30))
+    edamam_classification = db.Column(db.String(16))
     
     def __repr__(self):
 
@@ -213,30 +214,6 @@ def connect_to_db(app):
     db.app = app
     db.init_app(app)
 
-
-# def predict_user_rating(title, user_id):
-
-#     m = Movie.query.filter_by(title=title).one()
-#     u = User.query.get(user_id)
-
-#     recipe = u.recipe
-
-#     other_recipe = Rating.query.filter_by(movie_id=m.movie_id).all()
-#     other_users = [r.user for r in other_recipe]
-
-#     users_w_commonality = []
-
-#     for rating in recipe:
-#         # print("********Movie********", rating.movie.title)
-#         movie_id = rating.movie_id
-#         # print("********movie_id******", movie_id)
-#         common_recipe = Rating.query.filter(Rating.movie_id==movie_id).all()
-#         users = [r.user for r in common_recipe]
-#         # print("********common_recipe*******", common_recipe)
-#         users_w_commonality.extend(users)
-
-#     unique_users = set(users_w_commonality)
-#     return unique_users
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave

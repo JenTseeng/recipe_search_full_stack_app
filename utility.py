@@ -1,4 +1,4 @@
-import os, requests, pickle
+import requests, pickle
 from datetime import datetime
 
 def query_recipe_api(app_id, app_key, query, num_recipes = 5, excluded = None):
