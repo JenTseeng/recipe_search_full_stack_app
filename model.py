@@ -243,5 +243,6 @@ if __name__ == "__main__":
     # you in a state of being able to work with the database directly.
 
     from server import app
+    init_app()
     connect_to_db(app)
     print("Connected to DB.")

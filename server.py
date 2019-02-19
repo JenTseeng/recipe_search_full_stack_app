@@ -2,9 +2,8 @@ from pprint import pformat
 
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
-
+import os, utility
 from model import *
-from utility import *
 from flask import Flask, render_template, request, flash, redirect, session
 
 app = Flask(__name__)
@@ -119,16 +118,16 @@ def find_recipes():
     """Search for recipes with keywords"""
 
     query = request.args.get('search_field')
-    excluded = '' # will eventually draw from user db (or session)
     num_recipes = 5
+    excluded = '' # will eventually draw from user db (or session)
 
-    data = query_recipe_api(app.search_id, app.search_key, query, num_recipes, excluded)
+    data = utility.query_recipe_api(app.search_id, app.search_key, query, num_recipes, excluded)
 
     # extract relevant info from API response
     recipes = []
     for hit in data['hits']:
         recipe = hit['recipe']
-        parsed_recipe = parse_recipe(recipe)
+        parsed_recipe = utility.parse_recipe(recipe)
         recipes.append(parsed_recipe)
 
     return render_template("search_results.html", recipes=recipes)
@@ -139,38 +138,28 @@ def find_recipes_with_ingred_limits():
     """Recipe Search with ingredient qty checks"""
 
     # query = request.args.get('search_field')
-    query = 'banana'
-    excluded = '' # will eventually draw from user db (or session)
-    num_recipes = 5
 
-    data = query_recipe_api(app, query, num_recipes, excluded)
+    requests_left = utility.check_api_call_budget()
+    if requests_left:
 
-    # parse recipes in API results
-    recipes = []
-    for hit in data['hits']:
-        recipe = hit['recipe']
-        parsed_recipe = parse_recipe(recipe)
-        recipes.append(parsed_recipe)
+        query = 'banana'
+        excluded = '' # will eventually draw from user db (or session)
+        num_recipes = 5
 
-    return render_template("search_results.html", recipes=recipes)
+        data = utility.query_recipe_api(app, query, num_recipes, excluded)
 
+        # parse recipes in API results
+        recipes = []
+        for hit in data['hits']:
+            recipe = hit['recipe']
+            parsed_recipe = utility.parse_recipe(recipe)
+            recipes.append(parsed_recipe)
 
-# @app.route("/check_api_calls")
-# def test_api_call_counter():
-#     """Debug route"""
+        return render_template("search_results.html", recipes=recipes)
 
-#     reset_API_call_count()
-#     init_test = check_for_API_calls_remaining()
-
-#     remaining_calls=False
-#     call_update_date = datetime.utcnow().date()
-#     setting_false = check_for_API_calls_remaining()
-
-#     previous_date = datetime.strptime("14-Feb-2019", "%d-%b-%Y").date()
-#     call_update_date = yesterday
-#     next_day = check_for_API_calls_remaining()
-
-#     return render_template("calls_debug.html", init = init_test, setting_false = setting_false, next_day=next_day)
+    else:
+        flash("No API calls remaining, perhaps try a regular recipe request")
+        redirect("/standard_results")
 
 
 ######################## Trials with APIs ###########################

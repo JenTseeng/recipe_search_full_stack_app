@@ -129,10 +129,11 @@ def update_API_calls_remaining(header):
         pickle.dump(call_info, file)
 
 
-def check_for_api_calls_remaining(filename='api_tracker.pickle'):
+def check_api_call_budget(infile='api_tracker.pickle', 
+                                    outfile='api_tracker.pickle'):
     """Check for remaining API calls before making a call"""
 
-    with open(filename,'rb') as file:
+    with open(infile,'rb') as file:
         call_info = pickle.load(file)
 
     if call_info['calls_avail_bool']==True and call_info['qty_calls_remaining']>0:
@@ -141,15 +142,14 @@ def check_for_api_calls_remaining(filename='api_tracker.pickle'):
     else:
         now = datetime.utcnow().date()
         if now > call_info['call_update_date']:
-            reset_API_call_count()
+            reset_api_call_count(outfile)
             return True
             
         else:
-            print("You've run out of API calls.  Perhaps try a regular recipe search.")
             return False
 
 
-def reset_API_call_count():
+def reset_api_call_count(filename='api_tracker.pickle'):
     """Reset counters for API"""
     
     CALL_LIMIT = 50
@@ -164,6 +164,6 @@ def reset_API_call_count():
                 "qty_calls_remaining":qty_calls_remaining,
                 "qty_results_remaining":qty_results_remaining}
 
-    file = open('api_tracker.pickle', 'wb')
+    file = open(filename, 'wb')
     pickle.dump(call_info, file)
     file.close()
