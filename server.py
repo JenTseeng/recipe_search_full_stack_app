@@ -1,5 +1,3 @@
-from pprint import pformat
-
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
 import os, utility
@@ -90,11 +88,25 @@ def show_user_details(user_id):
     return render_template("user_info.html", user=user)
 
 
-@app.route('/update_diet')
+@app.route('/select_diets')
 def show_diet_selection_page():
     """Dietary option selection page"""
 
-    return render_template("diet_selection.html")
+    diets = DietType.query.all()
+
+    return render_template("diet_selection.html", diets = diets)
+
+
+@app.route('/update_diet', methods=['POST'])
+def update_diet_preferences():
+    """Update diet preferences based on user input"""
+
+    diets = request.form.getlist('diets')
+    user_id = session['user_id']
+    utility.update_diet_preference(user_id, diets)
+
+    flash("Diet preferences updated")
+    return redirect("/users/{}".format(user_id))
 
 
 @app.route('/logout')
@@ -126,9 +138,14 @@ def find_recipes():
 
     query = request.args.get('search_field')
     num_recipes = 5
-    excluded = '' # will eventually draw from user db (or session)
+    if 'user_id' in session:
+        diet, health = utility.get_diet_preferences(session['user_id'])
+    else:
+        diet = ''
+        health = ''
 
-    data = utility.query_recipe_api(app.search_id, app.search_key, query, num_recipes, excluded)
+    data = utility.query_recipe_api(app.search_id, app.search_key, query, diet, 
+                                    health, num_recipes)
 
     # extract relevant info from API response
     recipes = []

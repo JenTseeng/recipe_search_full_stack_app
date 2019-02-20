@@ -62,11 +62,11 @@ class Ingredient(db.Model):
     __tablename__ = "ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    ingredient = db.Column(db.String(30))
+    ingred_name = db.Column(db.String(30))
     
     def __repr__(self):
 
-        return f"<Ingredient_id={self.ingredient_id} name={self.ingredient}>"
+        return f"<Ingredient_id={self.ingredient_id} name={self.ingred_name}>"
 
 
 class Pantry(db.Model):
@@ -103,12 +103,12 @@ class DietType(db.Model):
     __tablename__ = "diets"
 
     diet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    diet = db.Column(db.String(30))
-    edamam_classification = db.Column(db.String(16))
+    diet_name = db.Column(db.String(30))
+    edamam_class = db.Column(db.String(16))
     
     def __repr__(self):
 
-        return f"<Diet_id={self.diet_id} diet={self.diet}>"
+        return f"<Diet_id={self.diet_id} diet={self.diet_name}>"
 
 
 class DietPreference(db.Model):
@@ -121,6 +121,9 @@ class DietPreference(db.Model):
     diet_id = db.Column(db.Integer, db.ForeignKey('diets.diet_id'))
     strictness = db.Column(db.Integer, nullable=True)
     
+    diet_type = db.relationship('DietType', backref=db.backref('diet_pref'))
+    user = db.relationship('User', backref=db.backref('diet_pref'))
+
     def __repr__(self):
 
         return f"<Dietary Preference id={self.diet_pref_id} for user id: {self.user_id}>"
@@ -132,11 +135,11 @@ class Cuisine(db.Model):
     __tablename__ = "cuisines"
 
     cuisine_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    cuisine = db.Column(db.String(50))
+    cuisine_name = db.Column(db.String(50))
     
     def __repr__(self):
 
-        return f"<Cuisine cuisine_id={self.cuisine_id} name={self.cuisine}>"
+        return f"<Cuisine cuisine_id={self.cuisine_id} name={self.cuisine_name}>"
 
 
 class CuisinePreference(db.Model):
@@ -148,6 +151,9 @@ class CuisinePreference(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     cuisine_id = db.Column(db.Integer, db.ForeignKey('cuisines.cuisine_id'))
     cuisine_rating = db.Column(db.Integer, nullable=True)
+
+    cuisine = db.relationship('Cuisine', backref=db.backref('cuisine_pref'))
+    user = db.relationship('User', backref=db.backref('cuisine_pref'))
     
     def __repr__(self):
 
@@ -202,6 +208,58 @@ class SavedRecipe(db.Model):
         return f"<Saved Recipe record_id={self.record_id}>"
 
 
+class VolumeConversion(db.Model):
+    """Table to convert volumetric units"""
+
+    __tablename__ = "volume_conversions"
+    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    base_unit = db.Column(db.String(16), nullable=False)
+    teasoon = db.Column(db.Float(5), nullable=False)
+    tablespoon = db.Column(db.Float(5), nullable=False)
+    fluid_ounce = db.Column(db.Float(5), nullable=False)
+    cup = db.Column(db.Float(5), nullable=False)
+    pint = db.Column(db.Float(5), nullable=False)
+    quart = db.Column(db.Float(5), nullable=False)
+    gallon = db.Column(db.Float(5), nullable=False)
+    milliliter = db.Column(db.Float(5), nullable=False)
+    liter = db.Column(db.Float(5), nullable=False)
+
+    def __repr__(self):
+
+        return f"<Volume Conversion base_unit={self.base_unit}>"
+
+
+class MassConversion(db.Model):
+    """Table to convert mass units"""
+
+    __tablename__ = "mass_conversions"
+    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    base_unit = db.Column(db.String(16), nullable=False)
+    ounce = db.Column(db.Float(5), nullable=False)
+    pound = db.Column(db.Float(5), nullable=False)
+    gram = db.Column(db.Float(5), nullable=False)
+    
+    def __repr__(self):
+
+        return f"<Mass Conversion base_unit={self.base_unit}>"
+
+
+class LengthConversion(db.Model):
+    """Table to convert length units"""
+
+    __tablename__ = "length_conversions"
+    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    base_unit = db.Column(db.String(16), nullable=False)
+    inches = db.Column(db.Float(5), nullable=False)
+    millimeters = db.Column(db.Float(5), nullable=False)
+    centimeters = db.Column(db.Float(5), nullable=False)
+    
+    def __repr__(self):
+
+        return f"<Length Conversion base_unit={self.base_unit}>"
+
+
+
 ##############################################################################
 # Helper functions
 
@@ -220,6 +278,5 @@ if __name__ == "__main__":
     # you in a state of being able to work with the database directly.
 
     from server import app
-    init_app()
     connect_to_db(app)
     print("Connected to DB.")

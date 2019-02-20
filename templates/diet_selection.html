@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h1>Please select your dietary preferences</h1>
+
+  <form action='/update_diet', method="POST">
+    {% for diet in diets%}
+      <input type="checkbox" name="diets" value='{{diet.diet_id}}'>{{diet.diet_name}}<br>
+    {% endfor %}
+    <br>
+    <input type="submit">
+  </form>
+
+{% endblock %}

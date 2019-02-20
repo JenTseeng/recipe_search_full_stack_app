@@ -1,11 +1,13 @@
 import requests, pickle
 from datetime import datetime
+from model import db, DietPreference
 
-def query_recipe_api(app_id, app_key, query, num_recipes = 5, excluded = None):
+def query_recipe_api(app_id, app_key, query, diet, health, num_recipes = 5, excluded = None):
     """ Query Recipe API for search terms """
 
     payload = {'app_id':app_id, 'app_key':app_key, 'q':query, 
-                'from':0, 'to':num_recipes, 'excluded':excluded}    
+                'from':0, 'to':num_recipes, 'diet':diet, 'health':health,
+                'excluded':excluded}    
     url = 'https://api.edamam.com/search'
     
     response = requests.get(url, params=payload)
@@ -39,56 +41,64 @@ def parse_recipe(recipe):
 
 
 def parse_search_results_with_ingred_limit(data, query, num_results = 5, min_qty=None, max_qty=None):
-    recipe_results = []
+    
+    pass
 
-    for hit in data:
-        new_entry = {}
-        ingredients = []
-        recipe = hit['recipe']
+    # recipe_results = []
 
-        # add relevant info to new_entry
-        new_entry['title'] = recipe['label']
-        new_entry['image'] = recipe['image']
-        new_entry['url'] = recipe['url']
+    # for hit in data:
+    #     new_entry = {}
+    #     ingredients = []
+    #     recipe = hit['recipe']
 
-        if ingred_check == True:
-            check_quantity()
+    #     # add relevant info to new_entry
+    #     new_entry['title'] = recipe['label']
+    #     new_entry['image'] = recipe['image']
+    #     new_entry['url'] = recipe['url']
 
 
-        # extract text from each ingredient and add to new_entry
-        for ingredient in recipe['ingredients']:
-            ingredients.append(ingredient['text'])        
-        new_entry['ingredients'] = ingredients
+    #     valid = check_quantity()
 
-        recipe_results.append(new_entry)
 
-    return recipe_results
+    #     # extract text from each ingredient and add to new_entry
+    #     for ingredient in recipe['ingredients']:
+    #         ingredients.append(ingredient['text'])        
+    #     new_entry['ingredients'] = ingredients
 
+    #     recipe_results.append(new_entry)
+
+    # return recipe_results
+
+
+def standardize_unit():
+    """Standardize unit for comparison"""
+
+    pass
 
 def check_quantity(ingredients, query_ingred, unit, condition):
     # starting with 1 thing in query to start
     # query = {ingred: 'flour', min: '2 cups', max = '4 cups'}
     
-    for ingredient in ingredients:
-        if ingredient == query_ingred:
-            ingred_data = spoon.parse_ingredients(ingredient)
-            num = ingred_data['amount']
-            unit_short = ingred_data['unitShort']
-            unit_long = ingred_data['unitLong']
-            if unit == unit_short or unit == unit_long:
-                if condition == "min_only":
-                    # check for min    
-                    pass
+    pass
 
-                elif condition == "max_only":
-                    # check for max
-                    pass
+    # for ingredient in ingredients:
+    #     if ingredient == query_ingred:
+    #         ingred_data = spoon.parse_ingredients(ingredient)
+    #         num = ingred_data['amount']
+    #         unit_short = ingred_data['unitShort']
+    #         unit_long = ingred_data['unitLong']
+    #         if unit == unit_short or unit == unit_long:
+    #             if condition == "min_only":
+    #                 # check for min    
+    #                 pass
 
-                else:
-                    # check for both
-                    pass
+    #             elif condition == "max_only":
+    #                 # check for max
+    #                 pass
 
-
+    #             else:
+    #                 # check for both
+    #                 pass
 
 
 def determine_bounds(min_qty=None, max_qty=None):
@@ -104,6 +114,38 @@ def determine_bounds(min_qty=None, max_qty=None):
         bounds = 'skip_qty_check'
 
     return bounds
+
+
+def update_diet_preference(user_id, preferences):
+    """Add diet preference of user to table"""
+
+    # delete previous entries
+    DietPreference.query.filter_by(user_id=user_id).delete()
+
+    # adding each diet preference to session
+    for diet_id in preferences:
+        new_preference_entry = DietPreference(user_id = user_id, 
+                                                diet_id = diet_id)
+        db.session.add(new_preference_entry)
+
+    # committing changes
+    db.session.commit()
+
+
+def get_diet_preferences(user_id):
+    """Get diet preferences from db"""
+
+    preferences = DietPreference.query.filter_by(user_id=user_id).all()
+    health = None
+    diet = None
+
+    for preference in preferences:
+        if preference.diet_type.edamam_class == 'Health':
+            health = preference.diet_type.diet_name
+        else:
+            diet = preference.diet_type.diet_name
+
+    return diet, health
 
 
 def update_API_calls_remaining(header):

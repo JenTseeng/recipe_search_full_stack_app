@@ -19,7 +19,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         connect_to_db(app)
 
         def _mock_query_recipe_api(search_id, search_key, query, 
-                                    num_recipes, excluded):
+                                    diet, health, num_recipes, excluded=None):
             """Mock function to circumvent API"""
 
             fake_data = {'hits':[{'recipe': {'label': 'Smoked Turkey',
@@ -37,6 +37,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
                 ]}}]}
 
             return fake_data
+
 
         # circumvent API request w/ mock function
         utility.query_recipe_api = _mock_query_recipe_api
@@ -101,13 +102,13 @@ class UtilityUnitTests(unittest.TestCase):
     def test_allow_api_call(self):
         """Test that API call allowed when API call limits not exhausted"""
         assert utility.check_api_call_budget('test_resources/api_limits_reset.pickle',
-                                    'dummy.pickle')==True
+                                    'test_resources/dummy.pickle')==True
 
 
     def test_refresh_api_call(self):
         """Test that daily API call count reset on next day"""
         assert utility.check_api_call_budget('test_resources/new_day_check.pickle',
-                                    'dummy.pickle')==True
+                                    'test_resources/dummy.pickle')==True
 
 
     def test_prevent_excess_api_calls(self):
@@ -123,7 +124,7 @@ class UtilityUnitTests(unittest.TestCase):
         file.close()
 
         assert utility.check_api_call_budget('test_resources/no_calls_remaining.pickle',
-                                    'dummy.pickle')==False
+                                    'test_resources/dummy.pickle')==False
 
 
 
