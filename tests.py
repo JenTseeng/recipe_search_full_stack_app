@@ -22,19 +22,9 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
                                     diet, health, num_recipes, excluded=None):
             """Mock function to circumvent API"""
 
-            fake_data = {'hits':[{'recipe': {'label': 'Smoked Turkey',
-                'image': 'https://www.edamam.com/web-img/6e5/6e5cdc3ba168fd8952cc776552afbbe9.jpg',
-                'source': "Leite's Culinaria",
-                'url': 'http://leitesculinaria.com/91246/recipes-smoked-turkey.html',
-                'yield': 22.0,
-                'dietLabels': ['High-Protein', 'Low-Carb'],
-                'healthLabels': ['Sugar-Conscious','Peanut-Free',
-                                'Tree-Nut-Free','Alcohol-Free'],
-                'ingredients': [
-                {'text': '1 whole (about 12 pounds) turkey','weight': 5002.0},
-                {'text': '2 tablespoons kosher salt', 'weight': 29.124999999507587},
-                {'text': '2 tablespoons coarsely ground black pepper', 'weight': 13.8}
-                ]}}]}
+            file = open('test_resources/fake_data.pickle', 'rb')
+            fake_data = pickle.load(file)
+            file.close()
 
             return fake_data
 
