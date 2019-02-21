@@ -266,7 +266,7 @@ class UnitConversion(db.Model):
     base_unit = db.Column(db.String(32), nullable=False)
     meas_type = db.Column(db.String(32), nullable=False)
     std_unit = db.Column(db.String(32), nullable=False)
-    conversion = db.Column(db.Float(5), nullable=False)
+    mult_factor = db.Column(db.Float(5), nullable=False)
     
     def __repr__(self):
 

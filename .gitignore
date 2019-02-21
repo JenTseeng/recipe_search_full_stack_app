@@ -1,5 +1,7 @@
 env/
-*ratingsLab/
 *secret*
 __pycache__
 *.pyc
+.coverage
+htmlcov/
+z_reference/

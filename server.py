@@ -134,20 +134,11 @@ def find_recipes():
 
     query = request.args.get('search_field')
     num_recipes = 5
-    if 'user_id' in session:
-        diet, health = userInteraction.get_diet_preferences(session['user_id'])
-    else:
-        diet = None
-        health = None
+    excluded = None
 
-    data = recipeProcessing.query_recipe_api(query, diet, health, num_recipes)
-
-    # extract relevant info from API response
-    recipes = []
-    for hit in data['hits']:
-        recipe = hit['recipe']
-        parsed_recipe = recipeProcessing.parse_recipe(recipe)
-        recipes.append(parsed_recipe)
+    diet, health = userInteraction.set_diet_info(session)
+    recipes = recipeProcessing.get_recipes(query, diet, health, num_recipes, 
+                                        excluded)
 
     return render_template("search_results.html", recipes=recipes)
 
@@ -158,22 +149,17 @@ def find_recipes_with_ingred_limits():
 
     # check for API calls remaining
     requests_left = requestTracking.check_api_call_budget()
+    diet, health = userInteraction.set_diet_info(session)
+    excluded = None
 
     if requests_left:
-        # query = request.args.get('search_field')
+        query = request.args.get('search_field')
+        min_amt = request.args.get('min_qty')
+        max_amt = request.args.get('max_qty')
+        unit = request.args.get('unit')
 
-        query = 'banana'
-        excluded = '' # will eventually draw from user db (or session)
-        num_recipes = 5
-
-        data = recipeProcessing.query_recipe_api(app, query, num_recipes, excluded)
-
-        # parse recipes in API results
-        recipes = []
-        for hit in data['hits']:
-            recipe = hit['recipe']
-            parsed_recipe = recipeProcessing.parse_recipe(recipe)
-            recipes.append(parsed_recipe)
+        recipes = get_recipes_with_ingred_limit(query, min_amt, max_amt, unit, diet, 
+                                            health, excluded)
 
         return render_template("search_results.html", recipes=recipes)
 

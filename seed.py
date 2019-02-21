@@ -118,10 +118,10 @@ def load_unit_conversions():
     # Read u.volume_units file and insert data
     for row in open("seed_data/u.unit_conversions"):
         row = row.rstrip()
-        base_unit, meas_type, std_unit, conversion = row.split("|")
+        base_unit, meas_type, std_unit, mult_factor = row.split("|")
 
         conversion = UnitConversion(base_unit=base_unit, meas_type=meas_type, 
-                                    std_unit=std_unit, conversion=conversion)
+                                    std_unit=std_unit, mult_factor=mult_factor)
 
 
         # We need to add to the session or it won't ever be stored
@@ -132,7 +132,7 @@ def load_unit_conversions():
 
 
 
-def load_unit_conventions():
+def load_name_conventions():
     """Load unit name conventions from u.unit_crosswalks"""
 
     print("Unit Formatting Table")
@@ -140,7 +140,8 @@ def load_unit_conventions():
     # Delete all rows in existing table to start fresh
     FormattedUnit.query.delete()
 
-    # Read u.volume_units file and insert data
+    # Read u.unit_formatting file and insert data
+    # TODO: think about how to handle weight ounces vs. fluid ounces
     for row in open("seed_data/u.unit_formatting"):
         row = row.rstrip()
         unit_name, formatted_name, meas_type = row.split("|")
@@ -165,5 +166,5 @@ if __name__ == "__main__":
     load_diets()
     # load_volume_units()
     # load_mass_units()
-    load_unit_conventions()
+    load_name_conventions()
     load_unit_conversions()

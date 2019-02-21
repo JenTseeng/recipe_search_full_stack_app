@@ -1,7 +1,15 @@
 from model import db, DietPreference
 
 
+def set_diet_info(session):
+    """"""
+    if 'user_id' in session:
+        diet, health = userInteraction.get_diet_preferences(session['user_id'])
+    else:
+        diet = None
+        health = None
 
+    return diet, health
 
 
 def update_diet_preference(user_id, preferences):

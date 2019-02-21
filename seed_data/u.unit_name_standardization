@@ -13,12 +13,11 @@ cups|cup|volume
 c|cup|volume
 (c)|cup|volume
 fluid ounce|fluid_ounce|volume
-fluid_ounce|fluid_ounce|volume
-fl oz|fluid_ounce|volume
-ounce|fluid_ounce|volume
-ounces|fluid_ounce|volume
-oz|fluid_ounce|volume
-ozs|fluid_ounce|volume
+fl oz|fluid ounce|volume
+ounce|fluid ounce|volume
+ounces|fluid ounce|volume
+oz|fluid ounce|volume
+oz|fluid ounce|volume
 quart|quart|volume
 qt|quart|volume
 pint|pint|volume
@@ -39,7 +38,7 @@ inch|inch|length
 inches|inch|length
 in|inch|length
 millimeter|millimeter|length
-millimeter|millimeter|length
+millimeters|millimeter|length
 mm|millimeter|length
 centimeter|centimeter|length
 centimeter|centimeter|length

@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import session
 from server import app
 from model import *
-from resources import recipeProcessing, requestTracking
+from resources import recipeProcessing, requestTracking, ingredientProcessing
 
 class FlaskTestsWithoutLogin(unittest.TestCase):
     """Test Operations Not Requiring Logged In User"""
@@ -120,24 +120,27 @@ class RequestTrackingUnitTests(unittest.TestCase):
 class IngredProcessingUnitTests(unittest.TestCase):
     """Test that ingredient processing works correctly"""
 
+    def test_qty_conversion(self):
+        """Test unit conversion"""
+
+        input_min = 0.5
+        input_max = 1
+        unit_to_convert = 'quart'
+
+        minim, maxim, unit = ingredientProcessing.convert_qty(input_min,
+                                                            input_max,
+                                                            unit_to_convert)
+        assert minim == 2 and  maxim == 4 and unit == 'cup'
+
+
     def test_unit_conversion(self):
         """Test unit conversion"""
 
-        amount = 1
-        unit_to_convert = 'quart'
+        unit_to_convert = 'TBS'
 
-        converted = ingredientProcessing.convert_unit(amount, unit_to_convert)
-        assert converted == 4
+        converted = ingredientProcessing.standardize_unit(unit_to_convert)
 
-
-    def test_unit_conversion(self):
-        """Test unit conversion"""
-
-        amount = 1
-        unit_to_convert = 'quart'
-
-        converted = ingredientProcessing.convert_qty(amount, unit_to_convert)
-        assert converted == 4
+        assert converted == 'tbs'
 
 
     def test_unit_comparison(self):
