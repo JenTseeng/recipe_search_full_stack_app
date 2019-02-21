@@ -1,0 +1,16 @@
+teaspoon|volume|teaspoon|1
+tablespoon|volume|teaspoon|3
+milliliter|volume|teaspoon|4.928921594
+fluid_ounce|volume|cup|0.125
+cup|volume|cup|1
+pint|volume|cup|2
+quart|volume|cup|4
+gallon|volume|cup|16
+liters|volume|cup|4.226752838
+ounce|weight|ounce|1
+pound|weight|ounce|16
+gram|weight|ounce|0.03527396195
+kilogram|weight|ounce|0.00003527396195
+inch|length|inch|1
+millimeter|length|inch|0.03937007874
+centimeter|length|inch|0.3937007874

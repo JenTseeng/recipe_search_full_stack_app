@@ -208,56 +208,84 @@ class SavedRecipe(db.Model):
         return f"<Saved Recipe record_id={self.record_id}>"
 
 
-class VolumeConversion(db.Model):
-    """Table to convert volumetric units"""
+# class VolumeConversion(db.Model):
+#     """Table to convert volumetric units"""
 
-    __tablename__ = "volume_conversions"
-    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    base_unit = db.Column(db.String(16), nullable=False)
-    teasoon = db.Column(db.Float(5), nullable=False)
-    tablespoon = db.Column(db.Float(5), nullable=False)
-    fluid_ounce = db.Column(db.Float(5), nullable=False)
-    cup = db.Column(db.Float(5), nullable=False)
-    pint = db.Column(db.Float(5), nullable=False)
-    quart = db.Column(db.Float(5), nullable=False)
-    gallon = db.Column(db.Float(5), nullable=False)
-    milliliter = db.Column(db.Float(5), nullable=False)
-    liter = db.Column(db.Float(5), nullable=False)
+#     __tablename__ = "volume_conversions"
+#     record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     base_unit = db.Column(db.String(16), nullable=False)
+#     teasoon = db.Column(db.Float(5), nullable=False)
+#     tablespoon = db.Column(db.Float(5), nullable=False)
+#     fluid_ounce = db.Column(db.Float(5), nullable=False)
+#     cup = db.Column(db.Float(5), nullable=False)
+#     pint = db.Column(db.Float(5), nullable=False)
+#     quart = db.Column(db.Float(5), nullable=False)
+#     gallon = db.Column(db.Float(5), nullable=False)
+#     milliliter = db.Column(db.Float(5), nullable=False)
+#     liter = db.Column(db.Float(5), nullable=False)
 
-    def __repr__(self):
+#     def __repr__(self):
 
-        return f"<Volume Conversion base_unit={self.base_unit}>"
+#         return f"<Volume Conversion base_unit={self.base_unit}>"
 
 
-class MassConversion(db.Model):
-    """Table to convert mass units"""
+# class MassConversion(db.Model):
+#     """Table to convert mass units"""
 
-    __tablename__ = "mass_conversions"
-    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    base_unit = db.Column(db.String(16), nullable=False)
-    ounce = db.Column(db.Float(5), nullable=False)
-    pound = db.Column(db.Float(5), nullable=False)
-    gram = db.Column(db.Float(5), nullable=False)
+#     __tablename__ = "mass_conversions"
+#     record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     base_unit = db.Column(db.String(16), nullable=False)
+#     ounce = db.Column(db.Float(5), nullable=False)
+#     pound = db.Column(db.Float(5), nullable=False)
+#     gram = db.Column(db.Float(5), nullable=False)
     
-    def __repr__(self):
+#     def __repr__(self):
 
-        return f"<Mass Conversion base_unit={self.base_unit}>"
+#         return f"<Mass Conversion base_unit={self.base_unit}>"
 
 
-class LengthConversion(db.Model):
+# class LengthConversion(db.Model):
+#     """Table to convert length units"""
+
+#     __tablename__ = "length_conversions"
+#     record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     base_unit = db.Column(db.String(32), nullable=False)
+#     inches = db.Column(db.Float(5), nullable=False)
+#     millimeters = db.Column(db.Float(5), nullable=False)
+#     centimeters = db.Column(db.Float(5), nullable=False)
+    
+#     def __repr__(self):
+
+#         return f"<Length Conversion base_unit={self.base_unit}>"
+
+class UnitConversion(db.Model):
     """Table to convert length units"""
 
-    __tablename__ = "length_conversions"
+    __tablename__ = "unit_conversions"
     record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    base_unit = db.Column(db.String(16), nullable=False)
-    inches = db.Column(db.Float(5), nullable=False)
-    millimeters = db.Column(db.Float(5), nullable=False)
-    centimeters = db.Column(db.Float(5), nullable=False)
+    base_unit = db.Column(db.String(32), nullable=False)
+    meas_type = db.Column(db.String(32), nullable=False)
+    std_unit = db.Column(db.String(32), nullable=False)
+    conversion = db.Column(db.Float(5), nullable=False)
     
     def __repr__(self):
 
-        return f"<Length Conversion base_unit={self.base_unit}>"
+        return f"<Unit Conversion base_unit={self.base_unit}>"
 
+
+
+class FormattedUnit(db.Model):
+    """Table with standard name for units"""
+
+    __tablename__ = "formatted_unit_names"
+    record_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    unit_name = db.Column(db.String(32), nullable=False)
+    formatted_name = db.Column(db.String(32), nullable=False)
+    meas_type = db.Column(db.String(32), nullable=False)
+    
+    def __repr__(self):
+
+        return f"<Unit Standard name base_unit={self.base_unit}>"
 
 
 ##############################################################################

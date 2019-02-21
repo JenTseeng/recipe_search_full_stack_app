@@ -1,6 +1,7 @@
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
-import os, utility
+import os
+from resources import recipeProcessing, userInteraction
 from model import *
 from flask import Flask, render_template, request, flash, redirect, session
 
@@ -9,12 +10,6 @@ app.secret_key = "ABC"
 
 # Jinja to raise errors for undefined vars
 app.jinja_env.undefined = StrictUndefined
-
-app.search_id = os.environ['search_id']
-app.search_key = os.environ['search_key']
-# keys for Edamam nutrition API
-# app.ingred_id = os.environ['ingred_id']
-# app.ingred_key = os.environ['ingred_key']
 
 
 @app.route("/")
@@ -103,7 +98,7 @@ def update_diet_preferences():
 
     diets = request.form.getlist('diets')
     user_id = session['user_id']
-    utility.update_diet_preference(user_id, diets)
+    userInteraction.update_diet_preference(user_id, diets)
 
     flash("Diet preferences updated")
     return redirect("/users/{}".format(user_id))
@@ -128,6 +123,7 @@ def show_recipe_search_form():
 @app.route("/ingredient_search")
 def show_ingred_search_form():
     """Show ingredient search form"""
+    # TODO: create DB with units of UI and add loop in Jinja
 
     return render_template("ingredient_search.html")
 
@@ -139,19 +135,18 @@ def find_recipes():
     query = request.args.get('search_field')
     num_recipes = 5
     if 'user_id' in session:
-        diet, health = utility.get_diet_preferences(session['user_id'])
+        diet, health = userInteraction.get_diet_preferences(session['user_id'])
     else:
-        diet = ''
-        health = ''
+        diet = None
+        health = None
 
-    data = utility.query_recipe_api(app.search_id, app.search_key, query, diet, 
-                                    health, num_recipes)
+    data = recipeProcessing.query_recipe_api(query, diet, health, num_recipes)
 
     # extract relevant info from API response
     recipes = []
     for hit in data['hits']:
         recipe = hit['recipe']
-        parsed_recipe = utility.parse_recipe(recipe)
+        parsed_recipe = recipeProcessing.parse_recipe(recipe)
         recipes.append(parsed_recipe)
 
     return render_template("search_results.html", recipes=recipes)
@@ -162,7 +157,7 @@ def find_recipes_with_ingred_limits():
     """Recipe Search with ingredient qty checks"""
 
     # check for API calls remaining
-    requests_left = utility.check_api_call_budget()
+    requests_left = requestTracking.check_api_call_budget()
 
     if requests_left:
         # query = request.args.get('search_field')
@@ -171,13 +166,13 @@ def find_recipes_with_ingred_limits():
         excluded = '' # will eventually draw from user db (or session)
         num_recipes = 5
 
-        data = utility.query_recipe_api(app, query, num_recipes, excluded)
+        data = recipeProcessing.query_recipe_api(app, query, num_recipes, excluded)
 
         # parse recipes in API results
         recipes = []
         for hit in data['hits']:
             recipe = hit['recipe']
-            parsed_recipe = utility.parse_recipe(recipe)
+            parsed_recipe = recipeProcessing.parse_recipe(recipe)
             recipes.append(parsed_recipe)
 
         return render_template("search_results.html", recipes=recipes)

@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import session
 from server import app
 from model import *
-import utility
+from resources import recipeProcessing, requestTracking
 
 class FlaskTestsWithoutLogin(unittest.TestCase):
     """Test Operations Not Requiring Logged In User"""
@@ -18,8 +18,8 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         app.config['TESTING'] = True
         connect_to_db(app)
 
-        def _mock_query_recipe_api(search_id, search_key, query, 
-                                    diet, health, num_recipes, excluded=None):
+        def _mock_query_recipe_api(query, diet, health, num_recipes, 
+                                    excluded=None):
             """Mock function to circumvent API"""
 
             file = open('test_resources/fake_data.pickle', 'rb')
@@ -30,7 +30,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
 
         # circumvent API request w/ mock function
-        utility.query_recipe_api = _mock_query_recipe_api
+        recipeProcessing.query_recipe_api = _mock_query_recipe_api
 
 
     def test_existing_user_registration(self):
@@ -86,18 +86,18 @@ class FlaskTestsWithLogin(unittest.TestCase):
         self.assertIn(b'You are now logged out', result.data)
 
 
-class UtilityUnitTests(unittest.TestCase):
+class RequestTrackingUnitTests(unittest.TestCase):
     """Test tracking of Spoonacular API calls"""
 
     def test_allow_api_call(self):
         """Test that API call allowed when API call limits not exhausted"""
-        assert utility.check_api_call_budget('test_resources/api_limits_reset.pickle',
+        assert requestTracking.check_api_call_budget('test_resources/api_limits_reset.pickle',
                                     'test_resources/dummy.pickle')==True
 
 
     def test_refresh_api_call(self):
         """Test that daily API call count reset on next day"""
-        assert utility.check_api_call_budget('test_resources/new_day_check.pickle',
+        assert requestTracking.check_api_call_budget('test_resources/new_day_check.pickle',
                                     'test_resources/dummy.pickle')==True
 
 
@@ -113,9 +113,37 @@ class UtilityUnitTests(unittest.TestCase):
         pickle.dump(call_info,file)
         file.close()
 
-        assert utility.check_api_call_budget('test_resources/no_calls_remaining.pickle',
+        assert requestTracking.check_api_call_budget('test_resources/no_calls_remaining.pickle',
                                     'test_resources/dummy.pickle')==False
 
+
+class IngredProcessingUnitTests(unittest.TestCase):
+    """Test that ingredient processing works correctly"""
+
+    def test_unit_conversion(self):
+        """Test unit conversion"""
+
+        amount = 1
+        unit_to_convert = 'quart'
+
+        converted = ingredientProcessing.convert_unit(amount, unit_to_convert)
+        assert converted == 4
+
+
+    def test_unit_conversion(self):
+        """Test unit conversion"""
+
+        amount = 1
+        unit_to_convert = 'quart'
+
+        converted = ingredientProcessing.convert_qty(amount, unit_to_convert)
+        assert converted == 4
+
+
+    def test_unit_comparison(self):
+        """Test unit comparison"""
+        
+        pass
 
 
 if __name__ == "__main__":
