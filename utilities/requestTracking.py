@@ -2,13 +2,13 @@ from datetime import datetime
 import pickle
 
 
-def update_API_calls_remaining(header):
+def update_API_calls_remaining(header, file='api_tracker.pickle'):
     """Update remaining calls for spoonacular API"""
 
     # extract time and remaining budget from header
     date = datetime.strptime(header['Date'], '%a, %d %b %Y %X %Z').date()
-    qty_calls_remaining = header['X-RateLimit-requests-Remaining']
-    qty_results_remaining = header['X-RateLimit-results-Remaining']
+    qty_calls_remaining = int(header['X-RateLimit-requests-Remaining'])
+    qty_results_remaining = int(header['X-RateLimit-results-Remaining'])
 
     # set boolean for whether calls are available
     if qty_calls_remaining > 0 and qty_results_remaining > 0:
@@ -21,7 +21,7 @@ def update_API_calls_remaining(header):
     call_info = {"call_update_date":date,"calls_avail_bool":calls_avail_bool, 
                     "qty_calls_remaining":qty_calls_remaining,
                     "qty_results_remaining":qty_results_remaining}
-    with open('api_tracker.pickle','wb') as file:
+    with open(file,'wb') as file:
         pickle.dump(call_info, file)
 
 

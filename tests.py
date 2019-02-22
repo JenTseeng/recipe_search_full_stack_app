@@ -16,7 +16,8 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
-        connect_to_db(app)
+        connect_to_db(app, 'test_db')
+        # connect_to_db(app, 'test_db')
 
         def _mock_query_recipe_api(query, diet, health, num_recipes, 
                                     excluded=None):
@@ -28,25 +29,46 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
             return fake_data
 
+        # def _mock_query_ingred_api(ingredients):
+        #     """Mock function to circumvent API"""
+
+        #     fake_ingreds = 
+
+        #     return fake_ingreds
+
 
         # circumvent API request w/ mock function
         recipeTools.query_recipe_api = _mock_query_recipe_api
+
+
+    # def tearDown(self):
+    #     """Tear down for recipes"""
 
 
     def test_existing_user_registration(self):
         """Test existing users cannot register twice"""
 
         result = self.client.post("/confirm_registration", data={
-                                    'email':'bob@bob.com', 'pw':'hello'}, 
+                                    'email':'ann@ann.com', 'pw':'hello'}, 
                                     follow_redirects = True)
 
         self.assertIn(b'User already exists', result.data)
 
 
+    def test_incorrect_credentials(self):
+        """Test existing users cannot register twice"""
+
+        result = self.client.post("/check_login", data={
+                                    'email':'ann@ann.com', 'pw':'wrongpw'}, 
+                                    follow_redirects = True)
+
+        self.assertIn(b'Credentials incorrect', result.data)
+
+
     def test_login(self):
         """Test user login"""
 
-        result = self.client.post("/check_login", data={'email':'bob@bob.com', 
+        result = self.client.post("/check_login", data={'email':'ann@ann.com', 
                                     'pw':'hello'}, follow_redirects = True)
         self.assertIn(b'Welcome to your user page!!', result.data)
 
@@ -60,6 +82,26 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         self.assertIn(b'Smoked Turkey', result.data)
 
 
+    def test_ingredient_search(self):
+        """Test recipe search ingredient limits"""
+
+        result = self.client.get("/ingredient_results", 
+                                    data={'search_field':'test', 'min_qty'='1'
+                                    'max_qty'='2', 'unit'='cups'}, 
+                                    follow_redirects = True)
+        self.assertIn(b'Smoked Turkey', result.data)
+
+
+    # def test_user_registration(self):
+    #     """Test basic edamame recipe search without querying API"""
+
+    #     result = self.client.post("/confirm_registration", data={
+    #                                 'email':'blue@blue.com', 'pw':'hello'}, 
+    #                                 follow_redirects = True)
+
+    #     self.assertIn(b'User already exists', result.data)
+
+
 class FlaskTestsWithLogin(unittest.TestCase):
     """Test tracking of API calls"""
 
@@ -71,6 +113,7 @@ class FlaskTestsWithLogin(unittest.TestCase):
 
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
+        # connect_to_db(app, 'test_db')
 
         # Key for sessions access
         app.config['SECRET_KEY'] = 'ABC'
@@ -86,6 +129,15 @@ class FlaskTestsWithLogin(unittest.TestCase):
         self.assertIn(b'You are now logged out', result.data)
 
 
+    # def test_diet_addition(self):
+    #     """Test addition of diet to user profile"""
+
+    #     result = self.client.post("/update_diet", data={'diets':1},
+    #                                 follow_redirects = True)
+
+    #     self.assertIn(b'Diet preferences updated', result.data)
+
+
 class RequestTrackingUnitTests(unittest.TestCase):
     """Test tracking of Spoonacular API calls"""
 
@@ -97,8 +149,9 @@ class RequestTrackingUnitTests(unittest.TestCase):
 
     def test_refresh_api_call(self):
         """Test that daily API call count reset on next day"""
-        assert requestTracking.check_api_call_budget('test_resources/new_day_check.pickle',
-                                    'test_resources/dummy.pickle')==True
+        assert requestTracking.check_api_call_budget(
+                                        'test_resources/new_day_check.pickle',
+                                        'test_resources/dummy.pickle')==True
 
 
     def test_prevent_excess_api_calls(self):
@@ -113,8 +166,34 @@ class RequestTrackingUnitTests(unittest.TestCase):
         pickle.dump(call_info,file)
         file.close()
 
-        assert requestTracking.check_api_call_budget('test_resources/no_calls_remaining.pickle',
+        assert requestTracking.check_api_call_budget(
+                                    'test_resources/no_calls_remaining.pickle',
                                     'test_resources/dummy.pickle')==False
+
+
+    def test_update_tracker(self):
+        """Test that call count is updated"""
+        
+        # load test header response
+        filename = 'test_resources/header_response.pickle'
+        test_outfile = 'test_resources/dummy_update.pickle'
+
+        test_header_file = open(filename, 'rb')
+        header = pickle.load(test_header_file)
+        test_header_file.close()
+
+        # update header date
+        now = datetime.utcnow()
+        new_date = now.strftime('%a, %d %b %Y %X')+' GMT'
+        header['Date'] = new_date
+
+        requestTracking.update_API_calls_remaining(header, test_outfile)==True
+        
+        with open(test_outfile, 'rb') as result:
+            call_info = pickle.load(result)
+
+        # check that file was updated
+        assert call_info['call_update_date'] == now.date()
 
 
 class IngredToolsUnitTests(unittest.TestCase):

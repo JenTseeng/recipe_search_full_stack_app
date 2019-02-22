@@ -133,7 +133,7 @@ def find_recipes():
     """Search for recipes with keywords"""
 
     query = request.args.get('search_field')
-    num_recipes = 5
+    num_recipes = 50
     excluded = None
 
     diet, health = userInteraction.set_diet_info(session)
@@ -166,7 +166,7 @@ def find_recipes_with_ingred_limits():
 
     else:
         flash("No API calls remaining, perhaps try a regular recipe request")
-        redirect("/standard_results")
+        return redirect("/recipe_search")
 
 
 ######################## Trials with APIs ###########################

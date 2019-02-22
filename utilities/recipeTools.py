@@ -12,8 +12,7 @@ edamam_key = os.environ['search_key']
 def get_recipes(query, diet, health, num_recipes, excluded):
     """High level function to get recipes and return digested recipe info"""
 
-    data = query_recipe_api(query, diet, health, num_recipes, 
-                                            excluded)
+    data = query_recipe_api(query, diet, health, num_recipes, excluded)
     recipes = extract_recipes(data)
     
     return recipes
@@ -62,18 +61,14 @@ def get_recipes_within_range(query, min_amt, max_amt, unit, diet, health,
     """Search with ingredient limits"""
 
     qualifying_recipes = []
-    num_recipes = 10
+    num_recipes = 2
 
     recipes = get_recipes(query, diet, health, num_recipes, excluded)
-    target_ingred_strings = extract_target_ingredient(query, recipes)
-    print('---------------------------------------------------------')
-    print('------------THESE ARE THE INGREDIENT STRINGS!!!! --------')
-    print('---------------------------------------------------------')
-    print(target_ingred_strings)
-    parsed_ingredients = ingredientTools.query_ingred_api(target_ingred_strings)
+    rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
+    parsed_ingredients = ingredientTools.query_ingred_api(ingred_list)
 
     # note assuming each recipe only has target ingredient listed once
-    for idx, recipe in enumerate(recipes):
+    for idx, recipe in enumerate(rel_recipes):
         qualify = ingredientTools.check_ingred_qty(parsed_ingredients[idx],
                                                     min_amt, max_amt, unit)
         if qualify:
@@ -84,16 +79,20 @@ def get_recipes_within_range(query, min_amt, max_amt, unit, diet, health,
     return qualifying_recipes
 
 
-def extract_target_ingredient(query, recipes):
+def get_relevant_recipes_and_ingred(query, recipes):
     """Extract list of strings with ingredient with limits"""
-
+    relevant_recipes = []
     target_ingreds = []
     for recipe in recipes:
-        target_ingred = ''
-        for ingredient in recipe['ingredients']:
-            if query in ingredient:
-                target_ingred = ingredient 
-        target_ingreds.append(target_ingred) # will only take last match from a recipe
-
-    return '\n'.join(target_ingreds)
+        if query not in ','.join(recipe['ingredients']):
+            continue
+        else:
+            target_ingred = ''
+            for ingredient in recipe['ingredients']:
+                if query.lower() in ingredient.lower():
+                    target_ingred = ingredient
+            relevant_recipes.append(recipe)
+            target_ingreds.append(target_ingred) # will only take last match from a recipe
+        
+    return [relevant_recipes, '\n'.join(target_ingreds)]
 

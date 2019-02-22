@@ -1,5 +1,6 @@
 import string, os, requests
 from model import UnitConversion, FormattedUnit
+from utilities import requestTracking
 
 spoonacular_key = os.environ['APIKey']
 
@@ -42,6 +43,7 @@ def query_ingred_api(ingredients):
 
     response = requests.post(url, headers=headers, params = payload)
     data = response.json()
+    requestTracking.update_API_calls_remaining(response.headers)
 
     return data
 
@@ -56,9 +58,15 @@ def check_ingred_qty(ingred_dict, min_qty, max_qty, unit):
     # format and standardize recipe qty
     unit = ingred_dict['unitLong']
     qty = ingred_dict['amount']
-    converted_qty = convert_qty(qty, unit)
 
-    if converted_qty>min_std and converted_qty<max_qty:
+    # need to handle dry goods given in grams (vs. cups)
+    # temporarily avoid mass/volume conversions
+    try:
+        converted_qty, converted_unit = convert_qty(qty, unit)
+    except:
+        converted_qty = -1
+
+    if converted_qty >= min_std and converted_qty <= max_std:
         return True
     else:
         return False
