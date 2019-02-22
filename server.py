@@ -1,7 +1,7 @@
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
 import os
-from resources import recipeProcessing, userInteraction
+from utilities import recipeTools, userInteraction, requestTracking
 from model import *
 from flask import Flask, render_template, request, flash, redirect, session
 
@@ -137,8 +137,8 @@ def find_recipes():
     excluded = None
 
     diet, health = userInteraction.set_diet_info(session)
-    recipes = recipeProcessing.get_recipes(query, diet, health, num_recipes, 
-                                        excluded)
+    recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
+                                            excluded)
 
     return render_template("search_results.html", recipes=recipes)
 
@@ -158,8 +158,9 @@ def find_recipes_with_ingred_limits():
         max_amt = request.args.get('max_qty')
         unit = request.args.get('unit')
 
-        recipes = get_recipes_with_ingred_limit(query, min_amt, max_amt, unit, diet, 
-                                            health, excluded)
+        recipes = recipeTools.get_recipes_within_range(query, min_amt, max_amt, 
+                                                        unit, diet, health, 
+                                                        excluded)
 
         return render_template("search_results.html", recipes=recipes)
 

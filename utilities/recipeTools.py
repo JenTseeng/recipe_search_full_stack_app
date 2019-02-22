@@ -1,5 +1,5 @@
 import requests, os
-from resources import ingredientProcessing
+from utilities import ingredientTools
 
 edamam_id = os.environ['search_id']
 edamam_key = os.environ['search_key']
@@ -57,18 +57,31 @@ def extract_recipes(data):
     return recipes
 
 
-def get_recipes_with_ingred_limit(query, min_amt, max_amt, unit, diet, health, 
+def get_recipes_within_range(query, min_amt, max_amt, unit, diet, health, 
                                 excluded=None):
     """Search with ingredient limits"""
 
+    qualifying_recipes = []
     num_recipes = 10
-    min_std, max_std, unit_std = recipeProcessing.convert_qty(min_amt, 
-                                                                  max_amt, unit)
-    recipes = get_recipes(query, diet, health, num_recipes, excluded)
-    ingred_string = extract_target_ingredient(query, recipes)
-    response = ingredientProcessing.check_quantity(ingred_string)
 
-    return ingred_string
+    recipes = get_recipes(query, diet, health, num_recipes, excluded)
+    target_ingred_strings = extract_target_ingredient(query, recipes)
+    print('---------------------------------------------------------')
+    print('------------THESE ARE THE INGREDIENT STRINGS!!!! --------')
+    print('---------------------------------------------------------')
+    print(target_ingred_strings)
+    parsed_ingredients = ingredientTools.query_ingred_api(target_ingred_strings)
+
+    # note assuming each recipe only has target ingredient listed once
+    for idx, recipe in enumerate(recipes):
+        qualify = ingredientTools.check_ingred_qty(parsed_ingredients[idx],
+                                                    min_amt, max_amt, unit)
+        if qualify:
+            qualifying_recipes.append(recipe)
+        else:
+            continue
+
+    return qualifying_recipes
 
 
 def extract_target_ingredient(query, recipes):

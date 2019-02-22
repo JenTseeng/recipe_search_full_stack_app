@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import session
 from server import app
 from model import *
-from resources import recipeProcessing, requestTracking, ingredientProcessing
+from utilities import recipeTools, requestTracking, ingredientTools
 
 class FlaskTestsWithoutLogin(unittest.TestCase):
     """Test Operations Not Requiring Logged In User"""
@@ -30,7 +30,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
 
         # circumvent API request w/ mock function
-        recipeProcessing.query_recipe_api = _mock_query_recipe_api
+        recipeTools.query_recipe_api = _mock_query_recipe_api
 
 
     def test_existing_user_registration(self):
@@ -117,36 +117,22 @@ class RequestTrackingUnitTests(unittest.TestCase):
                                     'test_resources/dummy.pickle')==False
 
 
-class IngredProcessingUnitTests(unittest.TestCase):
-    """Test that ingredient processing works correctly"""
+class IngredToolsUnitTests(unittest.TestCase):
+    """Test that ingredient Tools work correctly"""
 
     def test_qty_conversion(self):
         """Test unit conversion"""
 
-        input_min = 0.5
-        input_max = 1
-        unit_to_convert = 'quart'
-
-        minim, maxim, unit = ingredientProcessing.convert_qty(input_min,
-                                                            input_max,
-                                                            unit_to_convert)
-        assert minim == 2 and  maxim == 4 and unit == 'cup'
+        converted, unit = ingredientTools.convert_qty(1, 'QUART')
+        assert converted == 4 and unit == 'cup'
 
 
     def test_unit_conversion(self):
         """Test unit conversion"""
 
-        unit_to_convert = 'TBS'
-
-        converted = ingredientProcessing.standardize_unit(unit_to_convert)
-
-        assert converted == 'tbs'
-
-
-    def test_unit_comparison(self):
-        """Test unit comparison"""
-        
-        pass
+        unit_to_convert = 'grams'
+        converted = ingredientTools.standardize_unit(unit_to_convert)
+        assert converted == 'gram'
 
 
 if __name__ == "__main__":
