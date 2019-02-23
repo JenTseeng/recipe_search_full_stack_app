@@ -84,7 +84,7 @@ def get_relevant_recipes_and_ingred(query, recipes):
     relevant_recipes = []
     target_ingreds = []
     for recipe in recipes:
-        if query not in ','.join(recipe['ingredients']):
+        if query.lower() not in ','.join(recipe['ingredients']).lower():
             continue
         else:
             target_ingred = ''

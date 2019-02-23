@@ -29,17 +29,17 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
             return fake_data
 
-        # def _mock_query_ingred_api(ingredients):
-        #     """Mock function to circumvent API"""
+        def _mock_query_ingred_api(ingredients):
+            """Mock function to circumvent API"""
 
-        #     fake_ingreds = 
+            fake_ingreds = {'unitLong':'pounds', 'amount':10}
 
-        #     return fake_ingreds
+            return fake_ingreds
 
 
-        # circumvent API request w/ mock function
+        # circumvent API request w/ mock functions
         recipeTools.query_recipe_api = _mock_query_recipe_api
-
+        ingredientTools.query_ingred_api = _mock_query_ingred_api
 
     # def tearDown(self):
     #     """Tear down for recipes"""
@@ -82,14 +82,15 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         self.assertIn(b'Smoked Turkey', result.data)
 
 
-    def test_ingredient_search(self):
-        """Test recipe search ingredient limits"""
+    # def test_ingredient_search(self):
+    #     """Test recipe search ingredient limits"""
 
-        result = self.client.get("/ingredient_results", 
-                                    data={'search_field':'test', 'min_qty'='1'
-                                    'max_qty'='2', 'unit'='cups'}, 
-                                    follow_redirects = True)
-        self.assertIn(b'Smoked Turkey', result.data)
+    #     result = self.client.get("/ingredient_results", 
+    #                                 data={'search_field':'turkey', 
+    #                                 'min_qty':'1','max_qty':'40', 
+    #                                 'unit':'pound'}, 
+    #                                 follow_redirects = True)
+    #     self.assertIn(b'Smoked Turkey', result.data)
 
 
     # def test_user_registration(self):
@@ -206,12 +207,22 @@ class IngredToolsUnitTests(unittest.TestCase):
         assert converted == 4 and unit == 'cup'
 
 
-    def test_unit_conversion(self):
+    def test_unit_standardization(self):
         """Test unit conversion"""
 
         unit_to_convert = 'grams'
         converted = ingredientTools.standardize_unit(unit_to_convert)
         assert converted == 'gram'
+
+
+    # def test_qty_checking(self):
+    #     """Test unit conversion"""
+
+    #     ingred_dict = {'unitLong':'pounds', 'amount':10}
+    #     result = ingredientTools.check_ingred_qty(ingred_dict, 1, 
+    #                                             20, 'pound')
+    #     print(result)
+    #     assert result == -1
 
 
 if __name__ == "__main__":

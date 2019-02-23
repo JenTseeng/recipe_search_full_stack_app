@@ -60,6 +60,7 @@ def check_ingred_qty(ingred_dict, min_qty, max_qty, unit):
     qty = ingred_dict['amount']
 
     # need to handle dry goods given in grams (vs. cups)
+    # need to check that units are the same
     # temporarily avoid mass/volume conversions
     try:
         converted_qty, converted_unit = convert_qty(qty, unit)
