@@ -133,7 +133,7 @@ def find_recipes():
     """Search for recipes with keywords"""
 
     query = request.args.get('search_field')
-    num_recipes = 50
+    num_recipes = 10
     excluded = None
 
     diet, health = userInteraction.set_diet_info(session)
@@ -168,16 +168,6 @@ def find_recipes_with_ingred_limits():
         flash("No API calls remaining, perhaps try a regular recipe request")
         return redirect("/recipe_search")
 
-
-######################## Trials with APIs ###########################
-
-# url= 'https://api.edamam.com/api/nutrition-data'
-# payload = {'app_id':app.ingred_id, 'app_key':app.ingred_key,'ingr':'1 cup flour'}
-# response = requests.get(url, params=payload)
-
-# response = requests.get("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/", headers={"X-RapidAPI-Key": "0259f0d9e1msha4cc9f28bb5ed5ep1deaf8jsn6ff56d1c04da"})
-# response = requests.get("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/jokes/random",headers={"X-RapidAPI-Key": "0259f0d9e1msha4cc9f28bb5ed5ep1deaf8jsn6ff56d1c04da"})
-# response = requests.get("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/cuisine",headers={"X-RapidAPI-Key": "0259f0d9e1msha4cc9f28bb5ed5ep1deaf8jsn6ff56d1c04da"})
 
 
 if __name__ == "__main__":

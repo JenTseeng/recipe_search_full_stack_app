@@ -61,18 +61,25 @@ def get_recipes_within_range(query, min_amt, max_amt, unit, diet, health,
     """Search with ingredient limits"""
 
     qualifying_recipes = []
-    num_recipes = 2
+    num_recipes = 10
 
     recipes = get_recipes(query, diet, health, num_recipes, excluded)
     rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
-    parsed_ingredients = ingredientTools.query_ingred_api(ingred_list)
+    parsed_ingredients = ingredientTools.query_ingred_api('\n'.join(ingred_list))
+
+    # parsed ingredients may come back in a different order than original
+
 
     # note assuming each recipe only has target ingredient listed once
-    for idx, recipe in enumerate(rel_recipes):
-        qualify = ingredientTools.check_ingred_qty(parsed_ingredients[idx],
-                                                    min_amt, max_amt, unit)
-        if qualify:
-            qualifying_recipes.append(recipe)
+    # check qty of parsed ingred before recipe and create a set with strings of qualifying ingredient
+    # check whether ingred in ingred_list (which is same order as recipes) is in set
+    # If ingred is in set, add recipe to qualifying recipes to show
+    ingred_set = ingredientTools.check_ingred_qty(parsed_ingredients, min_amt, 
+                                                    max_amt, unit)
+
+    for idx, ingredient in enumerate(ingred_list):
+        if ingredient in ingred_set:
+            qualifying_recipes.append(recipes[idx])
         else:
             continue
 
@@ -94,5 +101,5 @@ def get_relevant_recipes_and_ingred(query, recipes):
             relevant_recipes.append(recipe)
             target_ingreds.append(target_ingred) # will only take last match from a recipe
         
-    return [relevant_recipes, '\n'.join(target_ingreds)]
+    return [relevant_recipes, target_ingreds]
 

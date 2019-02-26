@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import session
 from server import app
 from model import *
-from utilities import recipeTools, requestTracking, ingredientTools
+from utilities import recipeTools, requestTracking, ingredientTools, userInteraction
 
 class FlaskTestsWithoutLogin(unittest.TestCase):
     """Test Operations Not Requiring Logged In User"""
@@ -16,30 +16,21 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
-        connect_to_db(app, 'test_db')
         # connect_to_db(app, 'test_db')
 
         def _mock_query_recipe_api(query, diet, health, num_recipes, 
                                     excluded=None):
             """Mock function to circumvent API"""
 
-            file = open('test_resources/fake_data.pickle', 'rb')
+            file = open('test_resources/static_edamam_data.pickle', 'rb')
             fake_data = pickle.load(file)
             file.close()
 
             return fake_data
 
-        def _mock_query_ingred_api(ingredients):
-            """Mock function to circumvent API"""
-
-            fake_ingreds = {'unitLong':'pounds', 'amount':10}
-
-            return fake_ingreds
-
 
         # circumvent API request w/ mock functions
         recipeTools.query_recipe_api = _mock_query_recipe_api
-        ingredientTools.query_ingred_api = _mock_query_ingred_api
 
     # def tearDown(self):
     #     """Tear down for recipes"""
@@ -79,18 +70,19 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         result = self.client.get("/standard_results", 
                                     data={'search_field':'test'}, 
                                     follow_redirects = True)
-        self.assertIn(b'Smoked Turkey', result.data)
+        self.assertIn(b'Almond Flour Muffins', result.data)
 
 
-    # def test_ingredient_search(self):
-    #     """Test recipe search ingredient limits"""
+    def test_ingredient_search(self):
+        """Test recipe search ingredient limits"""
 
-    #     result = self.client.get("/ingredient_results", 
-    #                                 data={'search_field':'turkey', 
-    #                                 'min_qty':'1','max_qty':'40', 
-    #                                 'unit':'pound'}, 
-    #                                 follow_redirects = True)
-    #     self.assertIn(b'Smoked Turkey', result.data)
+        result = self.client.get("/ingredient_results", 
+                                    data={'search_field':'almond flour', 
+                                    'min_qty':'1','max_qty':'2', 
+                                    'unit':'cup'}, 
+                                    follow_redirects = True)
+        self.assertIn(b'Almond Flour Fudge Brownies', result.data)
+        self.assertNotIn(b'Almond-Flour Crab Cakes With Lemon Aioli', result.data)
 
 
     # def test_user_registration(self):
@@ -114,13 +106,16 @@ class FlaskTestsWithLogin(unittest.TestCase):
 
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
-        # connect_to_db(app, 'test_db')
+        connect_to_db(app, 'test_db')
 
         # Key for sessions access
         app.config['SECRET_KEY'] = 'ABC'
         with self.client as c:
             with c.session_transaction() as sess:
                 sess['user_id'] = 1
+
+        with app.app_context():
+            db.init_app(app)
     
 
     def test_logout(self):
@@ -130,13 +125,21 @@ class FlaskTestsWithLogin(unittest.TestCase):
         self.assertIn(b'You are now logged out', result.data)
 
 
-    # def test_diet_addition(self):
-    #     """Test addition of diet to user profile"""
+    def test_get_diets(self):
+        """Test user diet info retrieval"""
 
-    #     result = self.client.post("/update_diet", data={'diets':1},
-    #                                 follow_redirects = True)
+        diet, health = userInteraction.get_diet_preferences(1)
+        
+        assert diet == 'balanced' and health == 'vegan'
 
-    #     self.assertIn(b'Diet preferences updated', result.data)
+
+    def test_diet_addition(self):
+        """Test addition of diet to user profile"""
+
+        result = self.client.post("/update_diet", data={'diets':[1,5]},
+                                    follow_redirects = True)
+
+        self.assertIn(b'Diet preferences updated', result.data)
 
 
 class RequestTrackingUnitTests(unittest.TestCase):
@@ -210,7 +213,7 @@ class IngredToolsUnitTests(unittest.TestCase):
     def test_unit_standardization(self):
         """Test unit conversion"""
 
-        unit_to_convert = 'grams'
+        unit_to_convert = 'GRAMS'
         converted = ingredientTools.standardize_unit(unit_to_convert)
         assert converted == 'gram'
 

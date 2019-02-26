@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from sqlalchemy import func
-from model import connect_to_db, db, DietType, UnitConversion, FormattedUnit, User
+from model import connect_to_db, db, DietType, UnitConversion, FormattedUnit, User, DietPreference
 from server import app
 from seed import load_diets, load_name_conventions, load_unit_conversions
 
@@ -30,6 +30,31 @@ def load_users():
     db.session.commit()
 
 
+def load_user_diets():
+    """Load diets from u.diet into database."""
+
+    print("Diet Preferences Table")
+
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate users
+    DietPreference.query.delete()
+
+    # Read u.diet file and insert data
+    for row in open("seed_data/u.test_userdiets"):
+        row = row.rstrip()
+        user_id, diet_id, strictness = row.split("|")
+
+        preference = DietPreference(user_id = user_id, diet_id = diet_id, 
+                                    strictness = strictness)
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(preference)
+
+    # Once we're done, we should commit our work
+    db.session.commit()
+
+
+
 if __name__ == "__main__":
     connect_to_db(app, 'test_db')
 
@@ -39,3 +64,4 @@ if __name__ == "__main__":
     load_name_conventions()
     load_unit_conversions()
     load_users()
+    load_user_diets()

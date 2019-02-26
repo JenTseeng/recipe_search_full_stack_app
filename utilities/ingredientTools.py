@@ -48,26 +48,31 @@ def query_ingred_api(ingredients):
     return data
 
 
-def check_ingred_qty(ingred_dict, min_qty, max_qty, unit):
+def check_ingred_qty(ingred_list, min_qty, max_qty, unit):
     """Check whether ingredient lies within bounds"""
 
     # standardize bounds
     min_std, unit_std = convert_qty(min_qty, unit)
     max_std, unit_std = convert_qty(max_qty, unit)
 
+    ingred_set = set()
     # format and standardize recipe qty
-    unit = ingred_dict['unitLong']
-    qty = ingred_dict['amount']
+    for ingred in ingred_list:
+        unit = ingred['unitLong']
+        qty = ingred['amount']
 
-    # need to handle dry goods given in grams (vs. cups)
-    # need to check that units are the same
-    # temporarily avoid mass/volume conversions
-    try:
-        converted_qty, converted_unit = convert_qty(qty, unit)
-    except:
-        converted_qty = -1
+        # need to handle dry goods given in grams (vs. cups)
+        # need to check that units are the same
+        # temporarily avoid mass/volume conversions
+        try:
+            converted_qty, converted_unit = convert_qty(qty, unit)
+        except:
+            converted_qty = -1
 
-    if converted_qty >= min_std and converted_qty <= max_std:
-        return True
-    else:
-        return False
+        if converted_qty >= min_std and converted_qty <= max_std:
+            # add ingredient string to set
+            ingred_set.add(ingred['original'])
+        else:
+            continue
+
+    return ingred_set
