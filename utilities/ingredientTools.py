@@ -1,6 +1,6 @@
 import string, os, requests
 from model import UnitConversion, FormattedUnit
-from utilities import requestTracking
+from utilities import requestTracking as rtrack
 
 spoonacular_key = os.environ['APIKey']
 
@@ -23,7 +23,7 @@ def standardize_unit(original_unit):
 
 def convert_qty(qty, original_unit):
 
-    std_unit = standardize_unit(original_unit)
+    std_unit = standardize_unit(str(original_unit))
 
     # grab conversion object
     conversion = UnitConversion.query.filter(UnitConversion.base_unit
@@ -34,7 +34,7 @@ def convert_qty(qty, original_unit):
     return std_qty, std_unit
 
 
-def query_ingred_api(ingredients):
+def call_ingred_api(ingredients):
     """Query Spoonacular API to parse target ingredient"""
 
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/parseIngredients"
@@ -43,8 +43,8 @@ def query_ingred_api(ingredients):
 
     response = requests.post(url, headers=headers, params = payload)
     data = response.json()
-    requestTracking.update_API_calls_remaining(response.headers)
-
+    rtrack.update_API_calls_remaining(response.headers)
+    
     return data
 
 

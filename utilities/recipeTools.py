@@ -1,24 +1,20 @@
 import requests, os
-from utilities import ingredientTools
+from utilities import ingredientTools as itools
 
 edamam_id = os.environ['search_id']
 edamam_key = os.environ['search_key']
 
 
-# keys for Edamam nutrition API
-# nutrition_id = os.environ['ingred_id']
-# nutrition_key = os.environ['ingred_key']
-
 def get_recipes(query, diet, health, num_recipes, excluded):
     """High level function to get recipes and return digested recipe info"""
 
-    data = query_recipe_api(query, diet, health, num_recipes, excluded)
+    data = call_recipe_api(query, diet, health, num_recipes, excluded)
     recipes = extract_recipes(data)
     
     return recipes
 
 
-def query_recipe_api(query, diet, health, num_recipes = 5, excluded = None):
+def call_recipe_api(query, diet, health, num_recipes = 5, excluded = None):
     """ Query Recipe API for search terms """
 
     payload = {'app_id':edamam_id, 'app_key':edamam_key, 'q':query, 
@@ -56,38 +52,29 @@ def extract_recipes(data):
     return recipes
 
 
-def get_recipes_within_range(query, min_amt, max_amt, unit, diet, health, 
-                                excluded=None):
+def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     """Search with ingredient limits"""
 
     qualifying_recipes = []
-    num_recipes = 10
 
-    recipes = get_recipes(query, diet, health, num_recipes, excluded)
     rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
-    parsed_ingredients = ingredientTools.query_ingred_api('\n'.join(ingred_list))
+    parsed_ingredients = itools.call_ingred_api('\n'.join(ingred_list))
 
-    # parsed ingredients may come back in a different order than original
-
-
-    # note assuming each recipe only has target ingredient listed once
-    # check qty of parsed ingred before recipe and create a set with strings of qualifying ingredient
-    # check whether ingred in ingred_list (which is same order as recipes) is in set
-    # If ingred is in set, add recipe to qualifying recipes to show
-    ingred_set = ingredientTools.check_ingred_qty(parsed_ingredients, min_amt, 
+    # create set of ingredients within min/max
+    qualifying_ingred_set = itools.check_ingred_qty(parsed_ingredients, min_amt, 
                                                     max_amt, unit)
 
+    # qualify recipes if ingredient in the qualifying set
     for idx, ingredient in enumerate(ingred_list):
-        if ingredient in ingred_set:
-            qualifying_recipes.append(recipes[idx])
-        else:
-            continue
+        if ingredient in qualifying_ingred_set:
+            qualifying_recipes.append(rel_recipes[idx])
 
     return qualifying_recipes
 
 
 def get_relevant_recipes_and_ingred(query, recipes):
     """Extract list of strings with ingredient with limits"""
+
     relevant_recipes = []
     target_ingreds = []
     for recipe in recipes:

@@ -149,20 +149,24 @@ def find_recipes_with_ingred_limits():
 
     # check for API calls remaining
     requests_left = requestTracking.check_api_call_budget()
-    diet, health = userInteraction.set_diet_info(session)
-    excluded = None
 
     if requests_left:
+        diet, health = userInteraction.set_diet_info(session)
+        excluded = None
         query = request.args.get('search_field')
         min_amt = request.args.get('min_qty')
         max_amt = request.args.get('max_qty')
         unit = request.args.get('unit')
 
-        recipes = recipeTools.get_recipes_within_range(query, min_amt, max_amt, 
-                                                        unit, diet, health, 
-                                                        excluded)
+        num_recipes = 10
+        excluded = ''
 
-        return render_template("search_results.html", recipes=recipes)
+        recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
+                                            excluded)
+        qualifying = recipeTools.get_qualifying_recipes(recipes, query, min_amt, 
+                                                        max_amt, unit)
+
+        return render_template("search_results.html", recipes=qualifying)
 
     else:
         flash("No API calls remaining, perhaps try a regular recipe request")
