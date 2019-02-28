@@ -70,7 +70,6 @@ def check_ingred_qty(ingred_list, min_qty, max_qty, unit):
             converted_qty = -1
 
         if converted_qty >= min_std and converted_qty <= max_std:
-            # add ingredient string to set
             ingred_set.add(ingred['original'])
         else:
             continue

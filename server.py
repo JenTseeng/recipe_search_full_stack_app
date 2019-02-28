@@ -87,22 +87,24 @@ def show_user_details(user_id):
 def show_diet_selection_page():
     """Dietary option selection page"""
 
-    diets = DietType.query.all()
+    diets = DietType.query.filter(DietType.edamam_class=="Diet").all()
+    health = DietType.query.filter(DietType.edamam_class=="Health").all()
 
-    return render_template("diet_selection.html", diets = diets)
+    return render_template("diet_selection.html", diets = diets, 
+                            healths = health)
 
 
 @app.route('/update_diet', methods=['POST'])
 def update_diet_preferences():
     """Update diet preferences based on user input"""
 
-    diets = request.form.getlist('diets')
-    user_id = session['user_id']
-    userInteraction.update_diet_preference(user_id, diets)
+    # create list from form submission and update
+    updates = [request.form.get('diet'), request.form.get('health')]
+    userInteraction.update_diet_preference(session['user_id'], updates)
 
-    flash("Diet preferences updated")
-    return redirect("/users/{}".format(user_id))
-
+    # flash("Diet preferences updated")
+    # return redirect("/users/{}".format(session['user_id']))
+    return "Your preferences have been updated!"
 
 @app.route('/logout')
 def logout():
@@ -159,7 +161,6 @@ def find_recipes_with_ingred_limits():
         unit = request.args.get('unit')
 
         num_recipes = 10
-        excluded = ''
 
         recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
                                             excluded)

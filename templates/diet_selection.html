@@ -1,14 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>Please select your dietary preferences</h1>
+  <h1>What are your diet and health preferences?</h1>
 
-  <form action='/update_diet', method="POST">
-    {% for diet in diets%}
-      <input type="checkbox" name="diets" value='{{diet.diet_id}}'>{{diet.diet_name}}<br>
-    {% endfor %}
-    <br>
-    <input type="submit">
-  </form>
+    <form id="diet-update-form" action='/update_diet' method="POST">
+        <label>Please select your diet preference:</label>
+        <br>
+            {% for diet in diets%}
+              <input type="radio" id="diet-field" name="diet" value='{{diet.diet_id}}'>{{diet.diet_name}}
+            {% endfor %}
+        <br>
+
+        <br>
+        <label>Please select your health preference:</label>
+        <br>
+            {% for health in healths%}
+              <input type="radio" id="health-field" name="health" value='{{health.diet_id}}'>{{health.diet_name}}
+            {% endfor %}
+          <br>
+
+          <br>
+        <input type="submit">
+    </form>
+<script src='http://code.jquery.com/jquery.js'> </script>
+<script src="/static/js/update_diet.js"></script>
 
 {% endblock %}

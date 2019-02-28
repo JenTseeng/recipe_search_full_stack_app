@@ -29,7 +29,9 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         def _mock_call_ingred_api(ingredients):
             file = open('test_resources/static_parsed_ingredients.pickle', 'rb')
             fake_data = pickle.load(file)
-            file.close()            
+            file.close()
+
+            return fake_data            
 
 
         # circumvent API request w/ mock functions
@@ -72,7 +74,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         """Test basic edamame recipe search without querying API"""
 
         result = self.client.get("/standard_results", 
-                                    data={'search_field':'test'}, 
+                                    query_string={'search_field':'test'}, 
                                     follow_redirects = True)
         self.assertIn(b'Almond Flour Muffins', result.data)
 
@@ -81,7 +83,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         """Test recipe search ingredient limits"""
 
         result = self.client.get("/ingredient_results", 
-                                    data={'search_field':'almond flour', 
+                                    query_string={'search_field':'almond flour', 
                                     'min_qty':'1','max_qty':'2', 
                                     'unit':'cup'}, 
                                     follow_redirects = True)

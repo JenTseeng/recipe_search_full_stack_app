@@ -56,10 +56,10 @@ def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     """Search with ingredient limits"""
 
     qualifying_recipes = []
-
+    
     rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
     parsed_ingredients = itools.call_ingred_api('\n'.join(ingred_list))
-
+    
     # create set of ingredients within min/max
     qualifying_ingred_set = itools.check_ingred_qty(parsed_ingredients, min_amt, 
                                                     max_amt, unit)
@@ -87,6 +87,6 @@ def get_relevant_recipes_and_ingred(query, recipes):
                     target_ingred = ingredient
             relevant_recipes.append(recipe)
             target_ingreds.append(target_ingred) # will only take last match from a recipe
-        
+            
     return [relevant_recipes, target_ingreds]
 
