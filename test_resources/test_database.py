@@ -39,7 +39,7 @@ class TestDatabaseInteractions(unittest.TestCase):
     def test_diet_addition(self):
         """Test addition of diet to user profile"""
 
-        result = self.client.post("/update_diet", data={'diets':[1,5]},
+        result = self.client.post("/update_diet", data={'diet':1, 'health':5},
                                     follow_redirects = True)
 
-        self.assertIn(b'Diet preferences updated', result.data)
+        self.assertIn(b'updated', result.data)
