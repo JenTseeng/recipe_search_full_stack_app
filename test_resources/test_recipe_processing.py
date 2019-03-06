@@ -8,7 +8,7 @@ class IngredToolsUnitTests(unittest.TestCase):
         """Test unit conversion"""
 
         converted, unit = ingredientTools.convert_qty(1, 'QUART')
-        assert converted == 4 and unit == 'cup'
+        assert converted == 192 and unit == 'teaspoon'
 
 
     def test_unit_standardization(self):
