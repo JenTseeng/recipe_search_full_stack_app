@@ -1,8 +1,9 @@
-import string, os, requests
+import string, os, requests, en_core_web_sm
 from model import UnitConversion, FormattedUnit
 from utilities import requestTracking as rtrack
 
 spoonacular_key = os.environ['APIKey']
+nlp = en_core_web_sm.load() # loading spacy nlp model for english
 
 
 def standardize_unit(original_unit):
@@ -75,3 +76,18 @@ def check_ingred_qty(ingred_list, min_qty, max_qty, unit):
             continue
 
     return ingred_set
+
+
+# def process_string_spacy(string, has_range=False):
+#     """Parse string to quantities, unit, and ingredient using spaCy"""
+
+#     # process user input with min/max
+#     if has_range:
+
+
+#     # process individual ingredient from recipes
+#     else:
+#         pass
+#     pass
+
+

@@ -58,6 +58,11 @@ def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     qualifying_recipes = []
     
     rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
+
+    # NOTE TO SELF: WILL NEED TO PARSE INGREDIENT LIST AND DIVIDE LOAD BETWEEN
+    # (LIST CONTAINS INDIVIDUAL INGREDIENTS)
+    # ALSO NEED TO ACCOMODATE INGREDIENT RANGES FROM SEARCH INPUT
+    # RESULT WILL NEED
     parsed_ingredients = itools.call_ingred_api('\n'.join(ingred_list))
     
     # create set of ingredients within min/max

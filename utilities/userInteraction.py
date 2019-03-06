@@ -1,15 +1,17 @@
 from model import db, DietPreference, ExcludedIngredient
 
 
-def set_diet_info(session):
-    """"""
+def set_food_preferences(session):
+    """Setting saved diet and ingredient exclusions for registered users"""
     if 'user_id' in session:
         diet, health = get_diet_preferences(session['user_id'])
+        exclusion_list = get_ingred_exclusions(session['user_id'])
     else:
         diet = None
         health = None
+        exclusion_list = None
 
-    return diet, health
+    return diet, health, exclusion_list
 
 
 def update_diet_preference(user_id, preferences):
@@ -43,17 +45,6 @@ def get_diet_preferences(user_id):
             diet = preference.diet_type.diet_name
 
     return diet, health
-
-
-def set_exclusions(session):
-    """"""
-    if 'user_id' in session:
-        exclusion_list = get_ingred_exclusions(session['user_id'])
-    
-    if exclusion_list:
-        return exclusion_list
-    else:
-        return None
 
 
 def update_ingredient_exclusions(user_id, updates):

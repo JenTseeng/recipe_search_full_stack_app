@@ -149,8 +149,7 @@ def find_recipes():
     query = request.args.get('search_field')
     num_recipes = 10
     
-    excluded = userInteraction.set_exclusions(session)
-    diet, health = userInteraction.set_diet_info(session)
+    diet, health, excluded = userInteraction.set_food_preferences(session)
     recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
                                             excluded)
 
@@ -165,8 +164,7 @@ def find_recipes_with_ingred_limits():
     requests_left = requestTracking.check_api_call_budget()
 
     if requests_left:
-        diet, health = userInteraction.set_diet_info(session)
-        excluded = userInteraction.set_exclusions(session)
+        diet, health, excluded = userInteraction.set_food_preferences(session)
         query = request.args.get('search_field')
         min_amt = request.args.get('min_qty')
         max_amt = request.args.get('max_qty')
