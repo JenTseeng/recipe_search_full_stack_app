@@ -63,10 +63,10 @@ def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     # (LIST CONTAINS INDIVIDUAL INGREDIENTS)
     # ALSO NEED TO ACCOMODATE INGREDIENT RANGES FROM SEARCH INPUT
     # RESULT WILL NEED
-    parsed_ingredients = itools.call_ingred_api('\n'.join(ingred_list))
+    parsed_ingred_dict = itools.call_ingred_api('\n'.join(ingred_list))
     
     # create set of ingredients within min/max
-    qualifying_ingred_set = itools.check_ingred_qty(parsed_ingredients, min_amt, 
+    qualifying_ingred_set = itools.check_ingred_qty(parsed_ingred_dict, min_amt, 
                                                     max_amt, unit)
 
     # qualify recipes if ingredient in the qualifying set
@@ -77,24 +77,22 @@ def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     return qualifying_recipes
 
 
-def get_relevant_recipes_and_ingred(queries, recipes):
+def get_relevant_recipes_and_ingred(query, recipes):
     """Extract list of strings with ingredient with limits"""
 
     relevant_recipes = []
     target_ingreds = []
     for recipe in recipes:
-        relevant = True
-        for query in queries:
-            if query.lower() not in ','.join(recipe['ingredients']).lower():
-                relevant = False
-        
-        if relevant:
-            target_ingred = ''
-            for ingredient in recipe['ingredients']:
-                if query.lower() in ingredient.lower():
-                    target_ingred = ingredient
-            relevant_recipes.append(recipe)
-            target_ingreds.append(target_ingred) # will only take last match from a recipe
+        if query not in ','.join(recipe['ingredients']).lower():
+            continue
+    
+        # extract ingredients that match query
+        target_ingred = ''
+        for ingredient in recipe['ingredients']:
+            if query.lower() in ingredient.lower():
+                target_ingred = ingredient
+        relevant_recipes.append(recipe)
+        target_ingreds.append(target_ingred) # will only take last match from a recipe
             
     return [relevant_recipes, target_ingreds]
 

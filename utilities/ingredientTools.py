@@ -49,7 +49,7 @@ def call_ingred_api(ingredients):
     return data
 
 
-def check_ingred_qty(ingred_list, min_qty, max_qty, unit):
+def check_ingred_qty(ingred_dict, min_qty, max_qty, unit):
     """Check whether ingredient lies within bounds"""
 
     # standardize bounds
@@ -58,7 +58,7 @@ def check_ingred_qty(ingred_list, min_qty, max_qty, unit):
 
     ingred_set = set()
     # format and standardize recipe qty
-    for ingred in ingred_list:
+    for ingred in ingred_dict:
         unit = ingred['unitLong']
         qty = ingred['amount']
 
