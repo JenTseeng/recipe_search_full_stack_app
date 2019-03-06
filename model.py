@@ -56,46 +56,49 @@ class Complexity(db.Model):
         return f"<Complexity level ={self.complexity}>"
 
 
-class Ingredient(db.Model):
-    """Ingredient for a recipe"""
+# class Ingredient(db.Model):
+#     """Ingredients that can be in a recipe"""
 
-    __tablename__ = "ingredients"
+#     __tablename__ = "ingredients"
 
-    ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    ingred_name = db.Column(db.String(30))
+#     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     ingred_name = db.Column(db.String(30))
     
-    def __repr__(self):
+#     def __repr__(self):
 
-        return f"<Ingredient_id={self.ingredient_id} name={self.ingred_name}>"
+#         return f"<Ingredient_id={self.ingredient_id} name={self.ingred_name}>"
 
 
-class Pantry(db.Model):
-    """Pantry linking users with stable ingredients"""
+# class Pantry(db.Model):
+#     """Pantry linking users of readily available ingredients"""
 
-    __tablename__ = "pantries"
+#     __tablename__ = "pantries"
 
-    pantry_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'))
+#     pantry_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+#     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'))
     
-    def __repr__(self):
+#     def __repr__(self):
 
-        return f"<Pantry item for user id: {self.user_id}>"
+#         return f"<Pantry item for user id: {self.user_id}>"
 
 
-class IngredientPreference(db.Model):
+class ExcludedIngredient(db.Model):
     """Preferences of users for an ingredient"""
 
-    __tablename__ = "ingredient_preferences"
+    __tablename__ = "ingredient_exclusions"
 
-    ingredient_pref_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    ingredient_exclusion_id = db.Column(db.Integer, autoincrement=True, 
+                                        primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'))
-    ingred_rating = db.Column(db.Integer, nullable=True)
-    
+    ingred_name = db.Column(db.String(60))
+    user = db.relationship('User', backref=db.backref('excluded_ingreds'))
+
+
     def __repr__(self):
 
         return f"<Ingredient preference id={self.ingredient_pref_id} for user id {self.user_id}>"
+
 
 class DietType(db.Model):
     """Dietary Categories"""
@@ -121,8 +124,8 @@ class DietPreference(db.Model):
     diet_id = db.Column(db.Integer, db.ForeignKey('diets.diet_id'))
     strictness = db.Column(db.Integer, nullable=True)
     
-    diet_type = db.relationship('DietType', backref=db.backref('diet_pref'))
-    user = db.relationship('User', backref=db.backref('diet_pref'))
+    diet_type = db.relationship('DietType', backref=db.backref('diet_prefs'))
+    user = db.relationship('User', backref=db.backref('diet_prefs'))
 
     def __repr__(self):
 

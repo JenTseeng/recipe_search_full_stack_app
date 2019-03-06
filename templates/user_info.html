@@ -1,9 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>Welcome to your user page!!</h1>
-  <h2>User ID: {{user.user_id}}</h2>
-
-  <a href="/select_diets">Update Diet Preferences</a>
+    <h1>Welcome to your user page!!</h1>
+    <h2>User ID: {{user.user_id}}</h2>
+    Your saved diet preferences:
+    {% for preference in user.diet_prefs %}  
+    
+        <li>{{preference.diet_type.diet_name}}</li>
+    
+    {% endfor %}
+    <br>
+    Your excluded ingredients:
+    {% for ingredient in user.excluded_ingreds %}  
+    
+        <li>{{ingredient.ingred_name}}</li>
+    
+    {% endfor %}
+    <br>
+    <br>
+    <a href="/select_diets">Update Diet Preferences</a>
 
 {% endblock %}

@@ -4,17 +4,21 @@
 <h1>Let's use those ingredients!</h1>
 
 <form action='/ingredient_results' method='GET'>
-    Search for recipes with: <input type="text" name="search_field">
-    Min Qty: <input type="text" name="min_qty">
-    Max Qty: <input type="text" name="max_qty">
-    Unit: <select name="unit">
+    Please input limits and ingredient
+    <br>
+    Min: <input type="text" name="min_qty">
+    Max: <input type="text" name="max_qty">
+    <select name="unit">
         <option value='cup'> Cups </option>
         <option value='fluid_ounce'> Ounces (fluid) </option>
         <option value='tablespoon'> Tablespoons </option>
         <option value='teaspoon'> Teaspoons </option>
         <option value='pound'> Pounds </option>
         <option value='ounce'> Ounces (weight) </option>
-        </select>
+    </select>
+    of <input type="text" name="search_field">
+    
+
     <input type="submit" value="Search!">
 </form>
 

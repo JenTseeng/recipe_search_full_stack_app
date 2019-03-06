@@ -6,6 +6,7 @@
   <table>
       <tr>
         <!-- <td> <a href="/users">View all users</a> &nbsp&nbsp&nbsp&nbsp</td> -->
+        <td><a href="/">Recipe Search Home</a> &nbsp&nbsp</td>
         {% if 'user_id' in session %}
         <td> <a href="/users/{{session['user_id']}}">Go to user page</a>&nbsp&nbsp&nbsp&nbsp </td>
         <td>
@@ -21,6 +22,7 @@
         </form>
         {% endif %}
         </td>
+
       </tr>
   </table>
 </head>

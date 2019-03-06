@@ -80,6 +80,7 @@ def show_user_details(user_id):
     """User detail page"""
 
     user = User.query.get(int(user_id))
+
     return render_template("user_info.html", user=user)
 
 
@@ -102,9 +103,20 @@ def update_diet_preferences():
     updates = [request.form.get('diet'), request.form.get('health')]
     userInteraction.update_diet_preference(session['user_id'], updates)
 
-    # flash("Diet preferences updated")
-    # return redirect("/users/{}".format(session['user_id']))
-    return "Your preferences have been updated!"
+    return "Your diet/health preferences have been updated"
+
+
+@app.route('/update_ingred_preferences', methods=['POST'])
+def update_ingredient_preferences():
+    """Update diet preferences based on user input"""
+
+    # create list from form submission and update
+    updates = request.form.get('ingredient-text')
+    userInteraction.update_ingredient_exclusions(session['user_id'], 
+                                                            updates)
+
+    return "Your ingredient exclusions have been updated"
+
 
 @app.route('/logout')
 def logout():
@@ -136,8 +148,8 @@ def find_recipes():
 
     query = request.args.get('search_field')
     num_recipes = 10
-    excluded = None
-
+    
+    excluded = userInteraction.set_exclusions(session)
     diet, health = userInteraction.set_diet_info(session)
     recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
                                             excluded)
@@ -154,7 +166,7 @@ def find_recipes_with_ingred_limits():
 
     if requests_left:
         diet, health = userInteraction.set_diet_info(session)
-        excluded = None
+        excluded = userInteraction.set_exclusions(session)
         query = request.args.get('search_field')
         min_amt = request.args.get('min_qty')
         max_amt = request.args.get('max_qty')

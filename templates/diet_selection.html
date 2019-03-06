@@ -3,7 +3,9 @@
 
   <h1>What are your diet and health preferences?</h1>
 
-    <form id="diet-update-form" action='/update_diet' method="POST">
+    <!-- <form id="diet-update-form" action='/update_diet' method="POST"> -->
+    <form id="diet-update-form" method="POST">
+
         <label>Please select your diet preference:</label>
         <br>
             {% for diet in diets%}
@@ -17,11 +19,24 @@
             {% for health in healths%}
               <input type="radio" id="health-field" name="health" value='{{health.diet_id}}'>{{health.diet_name}}
             {% endfor %}
-          <br>
+          <br><br>
 
-          <br>
-        <input type="submit">
+        <input type="submit" value="Update Diet Preferences">
+        
     </form>
+    <br>
+
+    <br>
+    <form id="ingredient-form" method="POST">
+        
+        <label>What ingredients would you like to omit from results?  (comma separated list)</label>
+        <br>
+        <textarea id="ingredient-text-box" name="ingredient-text"></textarea>
+        <br>
+        <input type="submit" value="Update Ingredient Preferences">
+
+    </form>
+
 <script src='http://code.jquery.com/jquery.js'> </script>
 <script src="/static/js/update_diet.js"></script>
 
