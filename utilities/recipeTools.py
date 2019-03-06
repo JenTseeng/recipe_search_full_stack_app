@@ -77,15 +77,18 @@ def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
     return qualifying_recipes
 
 
-def get_relevant_recipes_and_ingred(query, recipes):
+def get_relevant_recipes_and_ingred(queries, recipes):
     """Extract list of strings with ingredient with limits"""
 
     relevant_recipes = []
     target_ingreds = []
     for recipe in recipes:
-        if query.lower() not in ','.join(recipe['ingredients']).lower():
-            continue
-        else:
+        relevant = True
+        for query in queries:
+            if query.lower() not in ','.join(recipe['ingredients']).lower():
+                relevant = False
+        
+        if relevant:
             target_ingred = ''
             for ingredient in recipe['ingredients']:
                 if query.lower() in ingredient.lower():

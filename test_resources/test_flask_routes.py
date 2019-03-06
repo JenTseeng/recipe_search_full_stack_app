@@ -83,7 +83,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         """Test recipe search ingredient limits"""
 
         result = self.client.get("/ingredient_results", 
-                                    query_string={'search_field':'almond flour', 
+                                    query_string={'search_field':['almond flour'], 
                                     'min_qty':'1','max_qty':'2', 
                                     'unit':'cup'}, 
                                     follow_redirects = True)
