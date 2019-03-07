@@ -38,9 +38,6 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         recipeTools.call_recipe_api = _mock_call_recipe_api
         ingredientTools.call_ingred_api = _mock_call_ingred_api
 
-    # def tearDown(self):
-    #     """Tear down for recipes"""
-
 
     def test_existing_user_registration(self):
         """Test existing users cannot register twice"""

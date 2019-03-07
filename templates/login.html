@@ -1,13 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Login</h1>
+<head>
 
-<form action="\check_login" method="POST">
-    E-mail Address: <input type="text" name="email" required>
-    Password: <input type="password" name="pw" required>
-    <input type="submit">
+<link href="/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="/static/style/signin.css" rel="stylesheet">
+  </head>
+
+<form class="form-signin" action="\check_login" method="POST">
+  <img class="mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+  <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+  <label for="inputEmail" class="sr-only">Email address</label>
+  <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required="" autofocus="">
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" name="pw" id="inputPassword" class="form-control" placeholder="Password" required="">
+  <div class="checkbox mb-3">
+    <label>
+      <input type="checkbox" value="remember-me"> Remember me
+    </label>
+  </div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>
-
 
 {% endblock %}
