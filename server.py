@@ -1,6 +1,6 @@
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
-import os
+import os, bcrypt
 from utilities import recipeTools, userInteraction, requestTracking
 from model import *
 from flask import Flask, render_template, request, flash, redirect, session
@@ -40,7 +40,8 @@ def add_user():
 
     # add user to db
     else:
-        user = User(email=email_to_check, password=pw)
+        hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+        user = User(email=email_to_check, password=hashed_pw.decode('utf-8'))
         db.session.add(user)
         db.session.commit()
 
@@ -61,10 +62,17 @@ def check_login():
 
     email_to_check = request.form.get('email')
     pw = request.form.get('pw')
-    user = User.query.filter(User.email==email_to_check, User.password==pw).first()
+    validated = False
+
+    # checking password with hashed pw in database
+    user = User.query.filter(User.email==email_to_check).first()
+    hashed_pw = user.password
+
+    if bcrypt.checkpw(pw.encode('utf-8'), hashed_pw.encode('utf-8')):
+        validated = True
 
     # log in user with valid credentials
-    if user:
+    if validated:
         session['user_id'] = user.user_id
         flash("You are now logged in!")
         return redirect("/users/{}".format(user.user_id))
