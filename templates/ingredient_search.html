@@ -4,11 +4,14 @@
 <h1>Let's use those ingredients!</h1>
 
 <form action='/ingredient_results' method='GET'>
-    Please input limits and ingredient
+    Please input limits for up to 3 ingredients (descending priority order)
     <br>
-    Min: <input type="text" name="min_qty">
-    Max: <input type="text" name="max_qty">
-    <select name="unit">
+    {% for i in range(3)%}
+    <br>
+    Ingredient {{i+1}}:<input type="text" name="search_field_{{i+1}}" value="">
+    Min Qty: <input type="number" name="min_qty_{{i+1}}" value=0>
+    Max Qty: <input type="number" name="max_qty_{{i+1}}">
+    <select name="unit_{{i+1}}">
         <option value='cup'> Cups </option>
         <option value='fluid_ounce'> Ounces (fluid) </option>
         <option value='tablespoon'> Tablespoons </option>
@@ -16,8 +19,9 @@
         <option value='pound'> Pounds </option>
         <option value='ounce'> Ounces (weight) </option>
     </select>
-    of <input type="text" name="search_field">
+    <br>
     
+    {%endfor%}
 
     <input type="submit" value="Search!">
 </form>

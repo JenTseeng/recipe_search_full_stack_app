@@ -166,18 +166,18 @@ def find_recipes_with_ingred_limits():
     if requests_left:
         diet, health, excluded = userInteraction.set_food_preferences(session)
         
-        # NOTE TO SELF: SPACY WOULD REPLACE THIS SECTION
-        query = request.args.get('search_field')
-        min_amt = request.args.get('min_qty')
-        max_amt = request.args.get('max_qty')
-        unit = request.args.get('unit')
+        query_1 = request.args.get('search_field_1')
+        min_amt_1 = request.args.get('min_qty_1')
+        max_amt_1 = request.args.get('max_qty_1')
+        unit_1 = request.args.get('unit_1')
 
         num_recipes = 10
 
-        recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
+        recipes = recipeTools.get_recipes(query_1, diet, health, num_recipes, 
                                             excluded)
-        qualifying = recipeTools.get_qualifying_recipes(recipes, query, min_amt, 
-                                                        max_amt, unit)
+        qualifying = recipeTools.get_qualifying_recipes(recipes, query_1, 
+                                                        min_amt_1, max_amt_1, 
+                                                         unit_1)
 
         return render_template("search_results.html", recipes=qualifying)
 
