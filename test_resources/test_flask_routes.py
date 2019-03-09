@@ -1,7 +1,7 @@
 import unittest, pickle
 from server import app
 from utilities import recipeTools, ingredientTools
-from model import connect_to_db
+from model import connect_to_db, User
 
 class FlaskTestsWithoutLogin(unittest.TestCase):
     """Test Operations Not Requiring Logged In User"""
@@ -26,6 +26,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
             return fake_data
 
+
         def _mock_call_ingred_api(ingredients):
             file = open('test_resources/static_parsed_ingredients.pickle', 'rb')
             fake_data = pickle.load(file)
@@ -47,6 +48,19 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
                                     follow_redirects = True)
 
         self.assertIn(b'User already exists', result.data)
+
+
+    def test_user_registration(self):
+        """Test existing users cannot register twice"""
+
+        email = 'sara@sara.com'
+        # delete user in db if exists
+        User.query.filter(User.email==email).delete()
+        result = self.client.post("/confirm_registration", data={
+                                    'email':email, 'pw':'hello'}, 
+                                    follow_redirects = True)
+
+        self.assertIn(b'Successfully registered!', result.data)
 
 
     def test_incorrect_credentials(self):

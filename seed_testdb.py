@@ -54,6 +54,29 @@ def load_user_diets():
     db.session.commit()
 
 
+# def load_user_ingred():
+#     """Load diets from u.diet into database."""
+
+#     print("Diet Preferences Table")
+
+#     # Delete all rows in table, so if we need to run this a second time,
+#     # we won't be trying to add duplicate users
+#     DietPreference.query.delete()
+
+#     # Read u.diet file and insert data
+#     for row in open("seed_data/u.test_userdiets"):
+#         row = row.rstrip()
+#         user_id, diet_id, strictness = row.split("|")
+
+#         preference = DietPreference(user_id = user_id, diet_id = diet_id, 
+#                                     strictness = strictness)
+
+#         # We need to add to the session or it won't ever be stored
+#         db.session.add(preference)
+
+#     # Once we're done, we should commit our work
+#     db.session.commit()
+
 
 if __name__ == "__main__":
     connect_to_db(app, 'test_db')

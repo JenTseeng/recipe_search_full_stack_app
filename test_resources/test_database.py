@@ -43,3 +43,13 @@ class TestDatabaseInteractions(unittest.TestCase):
                                     follow_redirects = True)
 
         self.assertIn(b'updated', result.data)
+
+
+    def test_ingred_addition(self):
+        """Test addition of ingredient to user profile"""
+
+        result = self.client.post("/update_ingred_preferences", 
+                                    data={'ingredient-text':'cilantro, salt'},
+                                    follow_redirects = True)
+
+        self.assertIn(b'ingredient exclusions have been updated', result.data)
