@@ -8,10 +8,10 @@
     <br>
     {% for i in range(3)%}
     <br>
-    Ingredient {{i+1}}:<input type="text" name="search_field_{{i+1}}" value="">
-    Min Qty: <input type="number" name="min_qty_{{i+1}}" value=0>
-    Max Qty: <input type="number" name="max_qty_{{i+1}}">
-    <select name="unit_{{i+1}}">
+    Ingredient {{i+1}}:<input type="text" name="search_field" value="">
+    Min Qty: <input type="number" name="min_qty" value=0 step="any" min=0>
+    Max Qty: <input type="number" name="max_qty" step="any" min=0>
+    <select name="unit">
         <option value='cup'> Cups </option>
         <option value='fluid_ounce'> Ounces (fluid) </option>
         <option value='tablespoon'> Tablespoons </option>
@@ -26,6 +26,6 @@
     <input type="submit" value="Search!">
 </form>
 
-<body>Hello</body>
+<body></body>
 
 {% endblock %}

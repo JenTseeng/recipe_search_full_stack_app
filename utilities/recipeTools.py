@@ -1,5 +1,6 @@
 import requests, os
 from utilities import ingredientTools as itools
+from flask import flash
 
 edamam_id = os.environ['search_id']
 edamam_key = os.environ['search_key']
@@ -16,6 +17,9 @@ def get_recipes(query, diet, health, num_recipes, excluded):
 
 def call_recipe_api(query, diet, health, num_recipes = 5, excluded = None):
     """ Query Recipe API for search terms """
+
+    if isinstance(query, list):
+        query = ','.join(query)
 
     payload = {'app_id':edamam_id, 'app_key':edamam_key, 'q':query, 
                 'from':0, 'to':num_recipes, 'diet':diet, 'health':health,
@@ -52,25 +56,39 @@ def extract_recipes(data):
     return recipes
 
 
-def get_qualifying_recipes(recipes, query, min_amt, max_amt, unit):
+def get_qualifying_recipes(recipes, query, mins, maxs, unit):
     """Search with ingredient limits"""
 
-    qualifying_recipes = []
+    if '' in query:
+        query.remove('')
+
+    for idx in range(len(query)):
+        ingred = query[idx]
+        remaining_recipes = []
+        
+        rel_recipes, ingred_list = get_relevant_recipes_and_ingred(ingred, 
+                                                                    recipes)
+
+        parsed_ingred_dict = itools.call_ingred_api('\n'.join(ingred_list))
+
+        # create set of ingredients within min/max
+        qualifying_ingred_set = itools.check_ingred_qty(parsed_ingred_dict, 
+                                                        mins[idx], maxs[idx],
+                                                        unit[idx])
+
+        # include recipes with ingredients in qualifying set
+        for idx, ingredient in enumerate(ingred_list):
+            if ingredient in qualifying_ingred_set:
+                remaining_recipes.append(rel_recipes[idx])
     
-    rel_recipes, ingred_list = get_relevant_recipes_and_ingred(query, recipes)
+        if len(remaining_recipes)>5:
+            recipes = remaining_recipes
+        else:
+            flash("Couldn't find recipes fitting all constraints \
+                    but here is our best match!")
+            break
 
-    parsed_ingred_dict = itools.call_ingred_api('\n'.join(ingred_list))
-
-    # create set of ingredients within min/max
-    qualifying_ingred_set = itools.check_ingred_qty(parsed_ingred_dict, min_amt, 
-                                                    max_amt, unit)
-
-    # qualify recipes if ingredient in the qualifying set
-    for idx, ingredient in enumerate(ingred_list):
-        if ingredient in qualifying_ingred_set:
-            qualifying_recipes.append(rel_recipes[idx])
-
-    return qualifying_recipes
+    return recipes
 
 
 def get_relevant_recipes_and_ingred(query, recipes):

@@ -174,18 +174,20 @@ def find_recipes_with_ingred_limits():
     if requests_left:
         diet, health, excluded = userInteraction.set_food_preferences(session)
         
-        query_1 = request.args.get('search_field_1')
-        min_amt_1 = request.args.get('min_qty_1')
-        max_amt_1 = request.args.get('max_qty_1')
-        unit_1 = request.args.get('unit_1')
+        queries = request.args.getlist('search_field')
+        mins = request.args.getlist('min_qty')
+        maxs = request.args.getlist('max_qty')
+        units = request.args.getlist('unit')
 
-        num_recipes = 10
+        if '' in queries:
+            queries.remove('')
 
-        recipes = recipeTools.get_recipes(query_1, diet, health, num_recipes, 
+        num_recipes = 20
+
+        recipes = recipeTools.get_recipes(queries, diet, health, num_recipes, 
                                             excluded)
-        qualifying = recipeTools.get_qualifying_recipes(recipes, query_1, 
-                                                        min_amt_1, max_amt_1, 
-                                                         unit_1)
+        qualifying = recipeTools.get_qualifying_recipes(recipes, queries, mins, 
+                                                        maxs, units)
 
         return render_template("search_results.html", recipes=qualifying)
 

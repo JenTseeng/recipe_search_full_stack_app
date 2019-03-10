@@ -1,9 +1,10 @@
-import string, os, requests, en_core_web_sm
+# import en_core_web_sm
+import string, os, requests
 from model import UnitConversion, FormattedUnit
 from utilities import requestTracking as rtrack
 
 spoonacular_key = os.environ['APIKey']
-nlp = en_core_web_sm.load() # loading spacy nlp model for english
+# nlp = en_core_web_sm.load() # loading spacy nlp model for english
 
 
 def standardize_unit(original_unit):
