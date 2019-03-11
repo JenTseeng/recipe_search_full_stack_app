@@ -40,16 +40,6 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         ingredientTools.call_ingred_api = _mock_call_ingred_api
 
 
-    def test_existing_user_registration(self):
-        """Test existing users cannot register twice"""
-
-        result = self.client.post("/confirm_registration", data={
-                                    'email':'ann@ann.com', 'pw':'hello'}, 
-                                    follow_redirects = True)
-
-        self.assertIn(b'User already exists', result.data)
-
-
     def test_user_registration(self):
         """Test existing users cannot register twice"""
 
@@ -63,11 +53,21 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
         self.assertIn(b'Successfully registered!', result.data)
 
 
+    def test_existing_user_registration(self):
+        """Test existing users cannot register twice"""
+
+        result = self.client.post("/confirm_registration", data={
+                                    'email':'sara@sara.com', 'pw':'hello'}, 
+                                    follow_redirects = True)
+
+        self.assertIn(b'User already exists', result.data)
+        
+
     def test_incorrect_credentials(self):
         """Test existing users cannot register twice"""
 
         result = self.client.post("/check_login", data={
-                                    'email':'ann@ann.com', 'pw':'wrongpw'}, 
+                                    'email':'sara@sara.com', 'pw':'wrongpw'}, 
                                     follow_redirects = True)
 
         self.assertIn(b'Credentials incorrect', result.data)
@@ -76,7 +76,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
     def test_login(self):
         """Test user login"""
 
-        result = self.client.post("/check_login", data={'email':'ann@ann.com', 
+        result = self.client.post("/check_login", data={'email':'sara@sara.com', 
                                     'pw':'hello'}, follow_redirects = True)
         self.assertIn(b'Welcome to your user page!!', result.data)
 
@@ -95,7 +95,7 @@ class FlaskTestsWithoutLogin(unittest.TestCase):
 
         result = self.client.get("/ingredient_results", 
                                     query_string={'search_field':'almond flour', 
-                                    'min_qty':'1','max_qty':'2', 
+                                    'min_qty':'0.25','max_qty':'2', 
                                     'unit':'cup'}, 
                                     follow_redirects = True)
         self.assertIn(b'Almond Flour Fudge Brownies', result.data)

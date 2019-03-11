@@ -67,11 +67,11 @@ def check_ingred_qty(ingred_dict, min_qty, max_qty, unit):
         # need to check that units are the same
         # temporarily avoid mass/volume conversions
         try:
-            converted_qty, converted_unit = convert_qty(qty, unit)
+            qty_conv, unit_conv = convert_qty(qty, unit)
         except:
-            converted_qty = -1
+            qty_conv = -1
 
-        if converted_qty >= min_std and converted_qty <= max_std:
+        if qty_conv >= min_std and qty_conv <= max_std and unit_std==unit_conv:
             ingred_set.add(ingred['original'])
         else:
             continue

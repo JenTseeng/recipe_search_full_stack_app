@@ -182,7 +182,7 @@ def find_recipes_with_ingred_limits():
         if '' in queries:
             queries.remove('')
 
-        num_recipes = 20
+        num_recipes = 30
 
         recipes = recipeTools.get_recipes(queries, diet, health, num_recipes, 
                                             excluded)
