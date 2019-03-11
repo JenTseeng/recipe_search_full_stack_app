@@ -3,13 +3,27 @@
 
 <h1>Search Results</h1>
 
-{% for recipe in recipes %}
-    <h3><a href="{{recipe['url']}}">{{recipe['title']}}</a></h3>
-    <img src="{{recipe['image']}}">
-    <ul> Ingredients:</ul>
-    {% for ingredient in recipe['ingredients'] %}
-        <ul>{{ingredient}}</ul>
-    {% endfor %}
-{% endfor %}
+<div class="container">
+    <div class="row">
+        {% for recipe in recipes %}
+        <div class="col-6 col-sm-5">
+            <div class="container-recipe-link">
+                <br>
+                <a href="{{recipe['url']}}">{{recipe['title']}}</a>
+            </div>
+            <div class="thumbnail">
+                <img src="{{recipe['image']}}">
+            </div>
+        
+            <div class="caption ingredients">
+                    {% for ingredient in recipe['ingredients'] %}
+                    <h6>{{ingredient}}</h6>
+                    {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
 
 {% endblock %}

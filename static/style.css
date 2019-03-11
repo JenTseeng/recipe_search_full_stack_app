@@ -1,0 +1,21 @@
+.ingredients {
+    top:65px;
+    left:20px;
+    position: absolute;
+    color: white;
+    width:280px;
+    overflow:hidden;
+    height:290px;
+    line-height:100px;
+}
+
+.thumbnail{
+    position:relative;
+
+}
+
+.container-recipe-link {
+    color: green;
+    font-weight: bold;
+    font-size: 21px;
+}

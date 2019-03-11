@@ -6,36 +6,37 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<!--   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script> -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css"></link>
 </head>
 
 <body>
-    <nav class="site-header sticky-top py-1">
+    <nav class="site-header sticky-top py-1 bg-light">
         <div class="container d-flex flex-column flex-md-row justify-content-between">
-            <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
 
             {% if 'user_id' in session %}
                 <a class="py-2 d-none d-md-inline-block" href="/users/{{session['user_id']}}">Go to user page</a>
-                <a href="/logout" class="btn btn-primary" role="button" aria-pressed="true">Log Out</a>
+                <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
+                <a href="/logout" class="btn btn-secondary" role="button" aria-pressed="true">Log Out</a>
 
             {% else %}
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#login-modal">Login</button>
+                <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#register-modal">Register Here!</button>
 
-                <button type="button" class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#login-modal">Login</button>
-                <!-- <button type="button" data-toggle="modal" data-target="#myModal">Launch modal</button> -->
-                <!-- <a href="/login" class="btn btn-primary" role="button" aria-pressed="true">Login</a> -->
-                <!-- <a class="py-2 d-none d-md-inline-block" href="/registration">Register here!</a> -->
-                <button type="button" class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#register-modal">Register Here!</button>
             {% endif %}
+
+            
+
         </div>
     </nav>
 
 
     {% for message in get_flashed_messages() %}
   
-    <div class="alert alert-info" role="alert">
+        <div class="alert alert-success" role="alert">
         {{ message }}
-    </div>
+        </div>
 
     {% endfor %}
 
