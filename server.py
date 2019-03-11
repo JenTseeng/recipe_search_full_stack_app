@@ -19,11 +19,11 @@ def homepage():
     return render_template("homepage.html")
 
 
-@app.route("/registration")
-def new_user():
-    """Show registration form"""
+# @app.route("/registration")
+# def new_user():
+#     """Show registration form"""
 
-    return render_template("registration.html")
+#     return render_template("registration.html")
 
 
 @app.route("/confirm_registration", methods=['POST'])
@@ -49,11 +49,11 @@ def add_user():
         return redirect("/")
 
 
-@app.route('/login')
-def login():
-    """Login page"""
+# @app.route('/login')
+# def login():
+#     """Login page"""
     
-    return render_template("login.html")
+#     return render_template("login.html")
 
 
 @app.route('/check_login', methods = ["POST"])
