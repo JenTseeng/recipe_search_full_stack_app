@@ -19,3 +19,30 @@
     font-weight: bold;
     font-size: 21px;
 }
+
+.site-header {
+    background-color:#84C176;
+}
+
+.py-2 {
+    color: white;
+}
+
+.btn {
+
+    border-radius: 17px;
+    background: none;
+    outline: 0 none;
+    /*padding: 5px 10px;*/
+
+}
+.main-body {
+    background-image: url("https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/2706013/1360/906/m1/fpnw/wm1/hzxej7gp1fk0gsw27kttge24pd1vkwmoymmzhv2klhcslkf6bsrxbuplwwide2ax-.jpg?1495097669&s=fcb598f11650b244d9cc181f3ad3c90d");
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

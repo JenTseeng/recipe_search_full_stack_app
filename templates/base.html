@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <nav class="site-header sticky-top py-1 bg-light">
+    <nav class="site-header sticky-top py-1">
         <div class="container d-flex flex-column flex-md-row justify-content-between">
 
             {% if 'user_id' in session %}
@@ -39,9 +39,9 @@
         </div>
 
     {% endfor %}
-
+        <div class="container main-body">
     {% block content %} put your content here {% endblock %}
-
+        </div>
     <!-- Login Modal -->
     <div id="login-modal" class="modal fade" role="dialog">
 
