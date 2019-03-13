@@ -29,7 +29,7 @@
 }
 
 .with-background {
-    background-image: url("/static/img/produce_opacity40.png");
+    background-image: url("/static/img/produce_opacity50.png");
     min-height: 100%;
     height: 700px;
     background-position: center;
@@ -56,7 +56,7 @@ body {
 }
 
 .normal-text {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 nav {
@@ -71,4 +71,14 @@ h2 {
 a {
     color: green;
     font-size: 20px;
+}
+
+.ingred-search-button {
+    font-size: 30px;
+    padding: 1px 10px;
+    background-color: green;
+    color: white;
+    border-radius: 17px;
+    border: solid;
+    border-color: green;
 }

@@ -16,7 +16,7 @@
         <div class="container d-flex flex-column flex-md-row justify-content-between">
 
             {% if 'user_id' in session %}
-                <a class="py-2 d-none d-md-inline-block" href="/users/{{session['user_id']}}">Go to user page</a>
+                <a class="btn py-2 d-none d-md-inline-block" href="/users/{{session['user_id']}}">Go to user page</a>
                 <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
                 <a href="/logout" class="btn" role="button" aria-pressed="true">Log Out</a>
 

@@ -88,8 +88,12 @@ def show_user_details(user_id):
     """User detail page"""
 
     user = User.query.get(int(user_id))
+    diets = DietType.query.filter(DietType.edamam_class=="Diet").all()
+    health = DietType.query.filter(DietType.edamam_class=="Health").all()
 
-    return render_template("user_info.html", user=user)
+
+    return render_template("user_info.html", user=user, diets = diets, 
+                            healths = health)
 
 
 @app.route('/select_diets')

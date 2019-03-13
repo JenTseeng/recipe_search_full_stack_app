@@ -3,25 +3,73 @@
 <div class="with-background">
         <div class="text-center">
         <h1>Welcome to your user page!!</h1>
-        <h2>User ID: {{user.user_id}}</h2>
-        <div class="normal-text">
-            Your saved diet preferences:
-            {% for preference in user.diet_prefs %}  
-            
-                <li>{{preference.diet_type.diet_name}}</li>
-            
-            {% endfor %}
+        <div class="row normal-text">
+            <div class="col">
+                Your saved diet preferences:
+                {% for preference in user.diet_prefs %}  
+                
+                    <li>{{preference.diet_type.diet_name}}</li>
+                
+                {% endfor %}
+            </div>
+            <div class="col">
+                Your excluded ingredients:
+                {% for ingredient in user.excluded_ingreds %}  
+                
+                    <li>{{ingredient.ingred_name}}</li>
+                
+                {% endfor %}
+            </div>
             <br>
-            Your excluded ingredients:
-            {% for ingredient in user.excluded_ingreds %}  
-            
-                <li>{{ingredient.ingred_name}}</li>
-            
-            {% endfor %}
             <br>
-            <br>
-            <a href="/select_diets">Update Diet Preferences</a>
+            <div class="row">
+                <div class="col">
+                    <!-- <button type="button" class="btn" data-toggle="modal" data-target="#diet-modal">Update Diet Preferences</button> -->
+                    <a href="/select_diets">Update Diet Preferences</a>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+
+
+
+<div id="diet-modal" class="modal fade" role="dialog">
+
+    <div class="modal-dialog">
+        <h1>What are your diet and health preferences?</h1>
+        <form id="diet-update-form" method="POST">
+
+            <label>Please select your diet preference:</label>
+            <br>
+                {% for diet in diets%}
+                  <input type="radio" id="diet-field" name="diet" value='{{diet.diet_id}}'>{{diet.diet_name}}
+                {% endfor %}
+            <br>
+
+            <br>
+            <label>Please select your health preference:</label>
+            <br>
+                {% for health in healths%}
+                  <input type="radio" id="health-field" name="health" value='{{health.diet_id}}'>{{health.diet_name}}
+                {% endfor %}
+              <br><br>
+
+            <input type="submit" value="Update Diet Preferences">
+            
+        </form>
+        <br>
+
+        <br>
+        <form id="ingredient-form" method="POST">
+            
+            <label>What ingredients would you like to omit from results?  (comma separated list)</label>
+            <br>
+            <textarea id="ingredient-text-box" name="ingredient-text"></textarea>
+            <br>
+            <input type="submit" value="Update Ingredient Preferences">
+
+        </form>
     </div>
 </div>
 {% endblock %}
