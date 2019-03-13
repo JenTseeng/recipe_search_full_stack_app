@@ -1,28 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<h1>Search Results</h1>
-
 <div class="container">
-    <div class="row">
-        {% for recipe in recipes %}
-        <div class="col-6 col-sm-5">
-            <div class="container-recipe-link">
-                <br>
-                <a href="{{recipe['url']}}">{{recipe['title']}}</a>
-            </div>
-            <div class="thumbnail">
-                <img src="{{recipe['image']}}">
-            </div>
-        
-            <div class="caption ingredients">
-                    {% for ingredient in recipe['ingredients'] %}
-                    <h6>{{ingredient}}</h6>
-                    {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
+    <br>
+    <h2>Search Results</h2>
 
+    <div class="container">
+        <div class="row">
+            {% for recipe in recipes %}
+            <div class="col-6 col-sm-4">
+                <div>
+                    <br>
+                    <a href="{{recipe['url']}}" class="recipe-link stretched-link">{{recipe['title']}}</a>
+                </div>
+                <div class="picture-with-ingredients">
+                    <div class="thumbnail">
+                        <img src="{{recipe['image']}}">
+                    </div>
+                    <div class="ingredients" data-scroll="true">
+                        {% for ingredient in recipe['ingredients'] %}
+                        <h6>{{ingredient}}</h6>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
     </div>
 </div>
 

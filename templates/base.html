@@ -8,6 +8,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/static/style.css"></link>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 </head>
 
 <body>
@@ -17,12 +18,12 @@
             {% if 'user_id' in session %}
                 <a class="py-2 d-none d-md-inline-block" href="/users/{{session['user_id']}}">Go to user page</a>
                 <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
-                <a href="/logout" class="btn btn-secondary" role="button" aria-pressed="true">Log Out</a>
+                <a href="/logout" class="btn" role="button" aria-pressed="true">Log Out</a>
 
             {% else %}
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#login-modal">Login</button>
-                <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#register-modal">Register Here!</button>
+                <button type="button" class="btn" data-toggle="modal" data-target="#login-modal">Login</button>
+                <a class="py-2 d-md-inline-block" href="/">Recipe Search Home</a>
+                <button type="button" class="btn" data-toggle="modal" data-target="#register-modal">Register Here!</button>
 
             {% endif %}
 
@@ -39,9 +40,7 @@
         </div>
 
     {% endfor %}
-        <div class="container main-body">
     {% block content %} put your content here {% endblock %}
-        </div>
     <!-- Login Modal -->
     <div id="login-modal" class="modal fade" role="dialog">
 
@@ -68,7 +67,7 @@
                                 <input type="checkbox" value="remember-me"> Remember me
                             </label>
                         </div>
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                        <button class="btn btn-lg btn-block" type="submit">Sign in</button>
 
                     </form>
                 </div>
@@ -106,7 +105,7 @@
                             </label>
                         </div>
                         
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                        <button class="btn btn-lg btn-block" type="submit">Register</button>
                     </form>
                 </div>
 

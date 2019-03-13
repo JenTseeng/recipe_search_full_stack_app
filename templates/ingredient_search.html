@@ -1,31 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="with-background">
+    <div class="text-center">
+        <h1>Let's use those ingredients!</h1>
+        <div class="normal-text">
 
-<h1>Let's use those ingredients!</h1>
+            <h3>Please input limits for up to 3 ingredients (descending priority order)</h3>
 
-<form action='/ingredient_results' method='GET'>
-    Please input limits for up to 3 ingredients (descending priority order)
-    <br>
-    {% for i in range(3)%}
-    <br>
-    Ingredient {{i+1}}:<input type="text" name="search_field" value="">
-    Min Qty: <input type="number" name="min_qty" value=0 step="any" min=0>
-    Max Qty: <input type="number" name="max_qty" step="any" min=0>
-    <select name="unit">
-        <option value='cup'> Cups </option>
-        <option value='fluid_ounce'> Ounces (fluid) </option>
-        <option value='tablespoon'> Tablespoons </option>
-        <option value='teaspoon'> Teaspoons </option>
-        <option value='pound'> Pounds </option>
-        <option value='ounce'> Ounces (weight) </option>
-    </select>
-    <br>
-    
-    {%endfor%}
+            <form action='/ingredient_results' method='GET'>
+                <br>
+                {% for i in range(3)%}
+                <br>
+                Ingredient {{i+1}}:<input type="text" name="search_field" value="">
+                Min Qty: <input type="number" name="min_qty" value=0 step="any" min=0>
+                Max Qty: <input type="number" name="max_qty" step="any" min=0>
+                <select name="unit">
+                    <option value='cup'> Cups </option>
+                    <option value='fluid_ounce'> Ounces (fluid) </option>
+                    <option value='tablespoon'> Tablespoons </option>
+                    <option value='teaspoon'> Teaspoons </option>
+                    <option value='pound'> Pounds </option>
+                    <option value='ounce'> Ounces (weight) </option>
+                </select>
+                <br>
+                
+                {%endfor%}
 
-    <input type="submit" value="Search!">
-</form>
-
-<body></body>
+                <input type="submit" value="Search!">
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
