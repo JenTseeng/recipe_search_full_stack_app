@@ -1,41 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="with-background">
+    <div class="diet-preferences-form">
 
-  <h1>What are your diet and health preferences?</h1>
+      <h1>What are your diet and health preferences?</h1>
 
-    <form id="diet-update-form" method="POST">
+        <form id="diet-update-form" method="POST">
 
-        <label>Please select your diet preference:</label>
+            <label>Please select your diet preference:</label>
+            <br>
+                {% for diet in diets%}
+                  <input type="radio" id="diet-field" name="diet" value='{{diet.diet_id}}'>{{diet.diet_name}}
+                {% endfor %}
+                  <input type="radio" id="diet-field" name="diet" value='None'>none
+            <br>
+
+            <br>
+            <label>Please select your health preference:</label>
+            <br>
+                {% for health in healths%}
+                  <input type="radio" id="health-field" name="health" value='{{health.diet_id}}'>{{health.diet_name}}
+                {% endfor %}
+                  <input type="radio" id="health-field" name="health" value='None'>none
+              <br><br>
+
+            <input type="submit" value="Update Diet Preferences">
+            
+        </form>
         <br>
-            {% for diet in diets%}
-              <input type="radio" id="diet-field" name="diet" value='{{diet.diet_id}}'>{{diet.diet_name}}
-            {% endfor %}
-        <br>
 
         <br>
-        <label>Please select your health preference:</label>
-        <br>
-            {% for health in healths%}
-              <input type="radio" id="health-field" name="health" value='{{health.diet_id}}'>{{health.diet_name}}
-            {% endfor %}
-          <br><br>
+        <form id="ingredient-form" method="POST">
+            
+            <label>What ingredients would you like to omit from results?  (comma separated list)</label>
+            <br>
+            <textarea id="ingredient-text-box" name="ingredient-text"></textarea>
+            <br>
+            <input type="submit" value="Update Ingredient Preferences">
 
-        <input type="submit" value="Update Diet Preferences">
-        
-    </form>
-    <br>
-
-    <br>
-    <form id="ingredient-form" method="POST">
-        
-        <label>What ingredients would you like to omit from results?  (comma separated list)</label>
-        <br>
-        <textarea id="ingredient-text-box" name="ingredient-text"></textarea>
-        <br>
-        <input type="submit" value="Update Ingredient Preferences">
-
-    </form>
+        </form>
+    </div>
 </div>
 <script src='http://code.jquery.com/jquery.js'> </script>
 <script src="/static/js/update_diet.js"></script>

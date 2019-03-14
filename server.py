@@ -19,13 +19,6 @@ def homepage():
     return render_template("homepage.html")
 
 
-# @app.route("/registration")
-# def new_user():
-#     """Show registration form"""
-
-#     return render_template("registration.html")
-
-
 @app.route("/confirm_registration", methods=['POST'])
 def add_user():
     """Add new user."""
@@ -47,13 +40,6 @@ def add_user():
 
         flash("Successfully registered!")
         return redirect("/")
-
-
-# @app.route('/login')
-# def login():
-#     """Login page"""
-    
-#     return render_template("login.html")
 
 
 @app.route('/check_login', methods = ["POST"])

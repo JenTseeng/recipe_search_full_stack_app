@@ -7,6 +7,18 @@
     overflow:hidden;
     height:280px;
     line-height:100px;
+    text-shadow: black 1px 1px 10px;
+    font-size: 20px;
+    font-family: sans-serif;
+    font-weight: 900;
+}
+
+.thumbnail{
+    filter: brightness(85%);
+}
+
+.diet-preferences-form{
+    margin-left: 50px;
 }
 
 .picture-with-ingredients{
@@ -15,6 +27,10 @@
 
 .site-header {
     background-color:#84C176;
+}
+
+.alert {
+    margin: 0;
 }
 
 .py-2 {
@@ -42,8 +58,7 @@
 
 .recipe-link {
     color: green;
-    font-weight: bold;
-    font-size: 20px;
+    font-size: 30px;
     
 }
 
