@@ -36,12 +36,12 @@ Users can include up to 3 ingredients with quantity limits.
 
 ### Recipe Search Results
 
-![Search Results](/static/img/docs/search_results.png)
+![Search Results](/static/img/docs/search_results.PNG)
 Results shown to the user will be those that best match the user's requirements.
 
 ### Profile
 
-![Profile](/static/img/README/user_profile.PNG)
+![Profile](/static/img/docs/user_profile.PNG)
 
 Users can save diet and ingredient preferences in their profile.  These preferences
 will be automatically be applied to the recipe search results.
