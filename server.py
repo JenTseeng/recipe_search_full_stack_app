@@ -145,7 +145,7 @@ def find_recipes():
     """Search for recipes with keywords"""
 
     query = request.args.get('search_field')
-    num_recipes = 10
+    num_recipes = 20
     
     diet, health, excluded = userInteraction.set_food_preferences(session)
     recipes = recipeTools.get_recipes(query, diet, health, num_recipes, 
@@ -172,7 +172,7 @@ def find_recipes_with_ingred_limits():
         if '' in queries:
             queries.remove('')
 
-        num_recipes = 30
+        num_recipes = 40
 
         recipes = recipeTools.get_recipes(queries, diet, health, num_recipes, 
                                             excluded)
@@ -188,7 +188,7 @@ def find_recipes_with_ingred_limits():
 
 
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
     # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False

@@ -17,12 +17,12 @@
 
             {% if 'user_id' in session %}
                 <a class="btn py-2 d-none d-md-inline-block" href="/users/{{session['user_id']}}">Go to user page</a>
-                <a class="py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
+                <a class="btn py-2 d-none d-md-inline-block" href="/">Recipe Search Home</a>
                 <a href="/logout" class="btn" role="button" aria-pressed="true">Log Out</a>
 
             {% else %}
                 <button type="button" class="btn" data-toggle="modal" data-target="#login-modal">Login</button>
-                <a class="py-2 d-md-inline-block" href="/">Recipe Search Home</a>
+                <a class="btn py-2 d-md-inline-block" href="/">Recipe Search Home</a>
                 <button type="button" class="btn" data-toggle="modal" data-target="#register-modal">Register Here!</button>
 
             {% endif %}
