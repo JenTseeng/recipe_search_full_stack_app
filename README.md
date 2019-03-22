@@ -1,6 +1,6 @@
 # Waste Not, Want Noms
 
-![Homepage](/static/img/docs/homepage.png)
+![Homepage](/static/img/docs/homepage.PNG)
 
 Waste Not, Want Noms is a web application aimed at helping home cooks find delicious recipes that use up available ingredients.  Users can input up to 3 ingredients and specify minimum and maximum quantities.  Waste Not, Want Noms will then gather recipes that satisfy those requirements.  Registered users can save dietary preferences as well as choose ingredients to omit from all recipes results.
 
@@ -30,14 +30,18 @@ Waste Not, Want Noms is a web application aimed at helping home cooks find delic
 
 ### Ingredient Search
 
-![Ingredient Search](/static/img/README/ingredient_search.png)
+![Ingredient Search](/static/img/docs/ingredient_search.PNG)
 
-Users can include up to 3 ingredients with quantity limits.  Results shown to 
-the user will be those that best match the user's requirements.
+Users can include up to 3 ingredients with quantity limits.  
+
+### Recipe Search Results
+
+![Search Results](/static/img/docs/search_results.png)
+Results shown to the user will be those that best match the user's requirements.
 
 ### Profile
 
-![Profile](/static/img/README/user_profile.png)
+![Profile](/static/img/README/user_profile.PNG)
 
 Users can save diet and ingredient preferences in their profile.  These preferences
 will be automatically be applied to the recipe search results.
